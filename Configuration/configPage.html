@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>TMDB Trailers</title>
+</head>
+<body>
+    <div id="TMDBTrailersConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="TMDBTrailersConfigForm">
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2 class="sectionTitle">TMDB Trailers Configuration</h2>
+                    </div>
+                    
+                    <div class="verticalSection">
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="TmdbApiKey">TMDB API Key:</label>
+                            <input is="emby-input" type="password" id="TmdbApiKey" name="TmdbApiKey" required />
+                            <div class="fieldDescription">
+                                Get your API key from <a href="https://www.themoviedb.org/settings/api" target="_blank">TMDB API Settings</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label>
+                                <input is="emby-checkbox" type="checkbox" id="EnableAutomaticDownload" name="EnableAutomaticDownload" />
+                                <span>Enable Automatic Download</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Automatically download trailers for new movies added to the library
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="selectContainer">
+                            <label class="inputLabel" for="PreferredQuality">Preferred Video Quality:</label>
+                            <select is="emby-select" id="PreferredQuality" name="PreferredQuality">
+                                <option value="480">480p</option>
+                                <option value="720">720p</option>
+                                <option value="1080">1080p</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="MaxTrailerDurationMinutes">Maximum Trailer Duration (minutes):</label>
+                            <input is="emby-input" type="number" id="MaxTrailerDurationMinutes" name="MaxTrailerDurationMinutes" min="1" max="30" />
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label>
+                                <input is="emby-checkbox" type="checkbox" id="OverwriteExistingTrailers" name="OverwriteExistingTrailers" />
+                                <span>Overwrite Existing Trailers</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Replace existing trailer files when downloading new ones
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="TrailerFolderName">Trailer Folder Name:</label>
+                            <input is="emby-input" type="text" id="TrailerFolderName" name="TrailerFolderName" />
+                            <div class="fieldDescription">
+                                Name of the subfolder where trailers will be stored
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label>
+                                <input is="emby-checkbox" type="checkbox" id="OrganizeInSubfolders" name="OrganizeInSubfolders" />
+                                <span>Organize in Subfolders</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Create separate subfolder for each movie's trailers
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="inputContainer">
+                            <label class="inputLabel" for="ProcessingIntervalHours">Processing Interval (hours):</label>
+                            <input is="emby-input" type="number" id="ProcessingIntervalHours" name="ProcessingIntervalHours" min="1" max="168" step="0.5" />
+                            <div class="fieldDescription">
+                                How often to check for new movies and download trailers
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label>
+                                <input is="emby-checkbox" type="checkbox" id="EnableDetailedLogging" name="EnableDetailedLogging" />
+                                <span>Enable Detailed Logging</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Log detailed information about trailer processing (for debugging)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="verticalSection">
+                        <button is="emby-button" type="submit" class="raised button-submit block">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            (function () {
+                var pluginId = "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5f";
+
+                $('#TMDBTrailersConfigPage').on('pageshow', function () {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                        $('#TmdbApiKey').val(config.TmdbApiKey);
+                        $('#EnableAutomaticDownload').checked(config.EnableAutomaticDownload);
+                        $('#PreferredQuality').val(config.PreferredQuality);
+                        $('#MaxTrailerDurationMinutes').val(config.MaxTrailerDurationMinutes);
+                        $('#OverwriteExistingTrailers').checked(config.OverwriteExistingTrailers);
+                        $('#TrailerFolderName').val(config.TrailerFolderName);
+                        $('#OrganizeInSubfolders').checked(config.OrganizeInSubfolders);
+                        $('#ProcessingIntervalHours').val(config.ProcessingIntervalHours);
+                        $('#EnableDetailedLogging').checked(config.EnableDetailedLogging);
+                        Dashboard.hideLoadingMsg();
+                    });
+                });
+
+                $('#TMDBTrailersConfigForm').on('submit', function () {
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                        config.TmdbApiKey = $('#TmdbApiKey').val();
+                        config.EnableAutomaticDownload = $('#EnableAutomaticDownload').checked();
+                        config.PreferredQuality = $('#PreferredQuality').val();
+                        config.MaxTrailerDurationMinutes = parseInt($('#MaxTrailerDurationMinutes').val());
+                        config.OverwriteExistingTrailers = $('#OverwriteExistingTrailers').checked();
+                        config.TrailerFolderName = $('#TrailerFolderName').val();
+                        config.OrganizeInSubfolders = $('#OrganizeInSubfolders').checked();
+                        config.ProcessingIntervalHours = parseFloat($('#ProcessingIntervalHours').val());
+                        config.EnableDetailedLogging = $('#EnableDetailedLogging').checked();
+
+                        ApiClient.updatePluginConfiguration(pluginId, config).then(function () {
+                            Dashboard.processPluginConfigurationUpdateResult();
+                        });
+                    });
+                    return false;
+                });
+            })();
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build TMDB Trailers Plugin",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"--configuration",
+				"Release"
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"isBackground": false
+		}
+	]
+}
