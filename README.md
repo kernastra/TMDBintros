@@ -224,6 +224,30 @@ dotnet test
 4. Add tests if applicable
 5. Submit a pull request
 
+## Plugin Development
+
+Want to create your own Jellyfin plugins? This repository includes comprehensive guides to help you:
+
+### 📚 [Jellyfin Plugin Development Guide](JELLYFIN_PLUGIN_DEVELOPMENT_GUIDE.md)
+A complete guide covering:
+- Project structure and architecture
+- Configuration system best practices
+- Dependency injection patterns
+- Scheduled task implementation
+- Packaging and distribution
+- GitHub Actions automation
+- Common pitfalls and solutions
+- Real-world examples from this TMDB plugin
+
+### ⚡ [Quick Start Template](QUICK_START_TEMPLATE.md)
+A minimal template to get started quickly:
+- Essential project files with placeholders
+- Step-by-step setup instructions
+- Quick checklist for new plugins
+- Copy-paste ready code snippets
+
+These guides are based on the real-world experience of building this TMDB Trailers plugin and will help you avoid common issues and set up proper CI/CD workflows.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
