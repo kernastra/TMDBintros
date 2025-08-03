@@ -75,7 +75,22 @@ pip install yt-dlp
 3. Click **Install**
 4. Restart Jellyfin
 
-### Option 2: Manual Installation
+### Option 2: Local Installation (Clone & Build)
+
+Perfect for testing, development, or using the latest features:
+
+1. **Quick Installation** (automated):
+   ```bash
+   git clone https://github.com/yourusername/TMDBintros.git
+   cd TMDBintros
+   ./local-install.sh
+   ```
+
+2. **Manual Installation** (step-by-step):
+   - See [LOCAL_INSTALLATION.md](LOCAL_INSTALLATION.md) for detailed instructions
+   - Includes troubleshooting and development setup
+
+### Option 3: Manual Installation
 
 1. Download the latest release DLL from the [Releases](https://github.com/yourusername/TMDBintros/releases) page
 2. Copy the DLL to your Jellyfin plugins directory (see paths above)
