@@ -54,10 +54,16 @@ jobs:
         dotnet restore
         dotnet build --configuration Release
         
+    - name: Create Plugin Package
+      run: |
+        mkdir -p package
+        cp bin/Release/net8.0/TMDBintros.dll package/
+        cd package && zip -r ../TMDBintros.zip . && cd ..
+        
     - name: Calculate SHA256
       id: sha256
       run: |
-        SHA256=$(sha256sum bin/Release/net8.0/TMDBintros.dll | cut -d' ' -f1)
+        SHA256=$(sha256sum TMDBintros.zip | cut -d' ' -f1)
         echo "checksum=$SHA256" >> $GITHUB_OUTPUT
         echo "SHA256: $SHA256"
         
@@ -76,11 +82,15 @@ jobs:
           
           ## Installation
           
-          1. Download `TMDBintros.dll` from the assets below
-          2. Copy to your Jellyfin plugins directory
-          3. Install yt-dlp: `sudo apt install yt-dlp` (Linux) or `winget install yt-dlp` (Windows)
-          4. Restart Jellyfin
-          5. Configure the plugin with your TMDB API key
+          1. Download `TMDBintros.zip` from the assets below
+          2. Extract the zip file
+          3. Copy `TMDBintros.dll` to your Jellyfin plugins directory
+          4. Install yt-dlp: `sudo apt install yt-dlp` (Linux) or `winget install yt-dlp` (Windows)
+          5. Restart Jellyfin
+          6. Configure the plugin with your TMDB API key
+          
+          **Or use as Custom Repository:**
+          Add `https://raw.githubusercontent.com/kernastra/TMDBintros/main/manifest.json` to Jellyfin's custom repositories.
           
           ## SHA256 Checksum
           ```
@@ -95,6 +105,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: bin/Release/net8.0/TMDBintros.dll
-        asset_name: TMDBintros.dll
-        asset_content_type: application/octet-stream
+        asset_path: TMDBintros.zip
+        asset_name: TMDBintros.zip
+        asset_content_type: application/zip
