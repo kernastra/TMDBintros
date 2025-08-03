@@ -122,40 +122,52 @@
             (function () {
                 var pluginId = "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5f";
 
-                $('#TMDBTrailersConfigPage').on('pageshow', function () {
+                document.getElementById('TMDBTrailersConfigPage').addEventListener('pageshow', function () {
                     Dashboard.showLoadingMsg();
+                    
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-                        $('#TmdbApiKey').val(config.TmdbApiKey);
-                        $('#EnableAutomaticDownload').checked(config.EnableAutomaticDownload);
-                        $('#PreferredQuality').val(config.PreferredQuality);
-                        $('#MaxTrailerDurationMinutes').val(config.MaxTrailerDurationMinutes);
-                        $('#OverwriteExistingTrailers').checked(config.OverwriteExistingTrailers);
-                        $('#TrailerFolderName').val(config.TrailerFolderName);
-                        $('#OrganizeInSubfolders').checked(config.OrganizeInSubfolders);
-                        $('#ProcessingIntervalHours').val(config.ProcessingIntervalHours);
-                        $('#EnableDetailedLogging').checked(config.EnableDetailedLogging);
+                        document.getElementById('TmdbApiKey').value = config.TmdbApiKey || '';
+                        document.getElementById('EnableAutomaticDownload').checked = config.EnableAutomaticDownload || false;
+                        document.getElementById('PreferredQuality').value = config.PreferredQuality || '720';
+                        document.getElementById('MaxTrailerDurationMinutes').value = config.MaxTrailerDurationMinutes || 5;
+                        document.getElementById('OverwriteExistingTrailers').checked = config.OverwriteExistingTrailers || false;
+                        document.getElementById('TrailerFolderName').value = config.TrailerFolderName || 'trailers';
+                        document.getElementById('OrganizeInSubfolders').checked = config.OrganizeInSubfolders || true;
+                        document.getElementById('ProcessingIntervalHours').value = config.ProcessingIntervalHours || 24;
+                        document.getElementById('EnableDetailedLogging').checked = config.EnableDetailedLogging || false;
+                        
                         Dashboard.hideLoadingMsg();
+                    }).catch(function (error) {
+                        console.error('Error loading configuration:', error);
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.alert('Error loading configuration: ' + error.message);
                     });
                 });
 
-                $('#TMDBTrailersConfigForm').on('submit', function () {
+                document.getElementById('TMDBTrailersConfigForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
                     Dashboard.showLoadingMsg();
+                    
                     ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-                        config.TmdbApiKey = $('#TmdbApiKey').val();
-                        config.EnableAutomaticDownload = $('#EnableAutomaticDownload').checked();
-                        config.PreferredQuality = $('#PreferredQuality').val();
-                        config.MaxTrailerDurationMinutes = parseInt($('#MaxTrailerDurationMinutes').val());
-                        config.OverwriteExistingTrailers = $('#OverwriteExistingTrailers').checked();
-                        config.TrailerFolderName = $('#TrailerFolderName').val();
-                        config.OrganizeInSubfolders = $('#OrganizeInSubfolders').checked();
-                        config.ProcessingIntervalHours = parseFloat($('#ProcessingIntervalHours').val());
-                        config.EnableDetailedLogging = $('#EnableDetailedLogging').checked();
+                        config.TmdbApiKey = document.getElementById('TmdbApiKey').value;
+                        config.EnableAutomaticDownload = document.getElementById('EnableAutomaticDownload').checked;
+                        config.PreferredQuality = document.getElementById('PreferredQuality').value;
+                        config.MaxTrailerDurationMinutes = parseInt(document.getElementById('MaxTrailerDurationMinutes').value) || 5;
+                        config.OverwriteExistingTrailers = document.getElementById('OverwriteExistingTrailers').checked;
+                        config.TrailerFolderName = document.getElementById('TrailerFolderName').value || 'trailers';
+                        config.OrganizeInSubfolders = document.getElementById('OrganizeInSubfolders').checked;
+                        config.ProcessingIntervalHours = parseFloat(document.getElementById('ProcessingIntervalHours').value) || 24;
+                        config.EnableDetailedLogging = document.getElementById('EnableDetailedLogging').checked;
 
-                        ApiClient.updatePluginConfiguration(pluginId, config).then(function () {
-                            Dashboard.processPluginConfigurationUpdateResult();
-                        });
+                        return ApiClient.updatePluginConfiguration(pluginId, config);
+                    }).then(function () {
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.processPluginConfigurationUpdateResult();
+                    }).catch(function (error) {
+                        console.error('Error saving configuration:', error);
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.alert('Error saving configuration: ' + error.message);
                     });
-                    return false;
                 });
             })();
         </script>
