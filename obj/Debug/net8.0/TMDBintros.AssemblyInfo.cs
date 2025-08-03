@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © YourName 2024")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+78577d91e2c0d0f70633b92b6566c3ed488fd6b9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4abf669951132d9183ae82f105b83151398f70f1")]
 [assembly: System.Reflection.AssemblyProductAttribute("Jellyfin Plugin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TMDB Trailers Plugin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
