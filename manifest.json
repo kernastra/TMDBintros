@@ -6,7 +6,6 @@
     "overview": "This plugin automatically searches for and downloads movie trailers from The Movie Database (TMDB) API, organizing them alongside your movie files for enhanced viewing experience. Features include configurable quality settings, automatic organization, and scheduled processing.",
     "owner": "kernastra",
     "category": "General",
-    "imageUrl": "https://raw.githubusercontent.com/kernastra/TMDBintros/main/images/logo.png",
     "versions": [
       {
         "version": "1.0.2.0",
