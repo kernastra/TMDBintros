@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/kernastra/TMDBintros/main/images/logo.png",
     "versions": [
       {
+        "version": "1.0.2.0",
+        "changelog": "Fixed configuration page JavaScript to resolve loading/saving issues - settings now save properly without hanging.",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v1.0.2/TMDBintros.zip",
+        "checksum": "1ae3506dd99e1d9e1745e39fafb08ca5",
+        "timestamp": "2025-08-03T16:15:00Z"
+      },
+      {
         "version": "1.0.1.0",
         "changelog": "Fixed plugin package format for Jellyfin compatibility - simplified zip structure to resolve installation issues.",
         "targetAbi": "10.8.13.0",
