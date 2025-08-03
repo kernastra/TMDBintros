@@ -13,8 +13,8 @@
         "changelog": "Fixed plugin package format for Jellyfin compatibility - simplified zip structure to resolve installation issues.",
         "targetAbi": "10.8.13.0",
         "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v1.0.1/TMDBintros.zip",
-        "checksum": "7d367c84bdadb213a15835780ce5157900fdb20102ecddff43a13525a354d14f",
-        "timestamp": "2025-08-03T15:56:30Z"
+        "checksum": "fba1596316acce5ea707ed4e5c7dae71",
+        "timestamp": "2025-08-03T16:07:00Z"
       }
     ]
   }
