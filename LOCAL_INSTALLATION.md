@@ -62,7 +62,7 @@ This guide explains how to clone, build, and install the TMDB Trailers plugin lo
 
 ```bash
 # Clone the repository
-git clone https://github.com/YourGitHubUsername/TMDBintros.git
+git clone https://github.com/kernastra/TMDBintros.git
 cd TMDBintros
 
 # Optional: Check available branches/tags
@@ -411,7 +411,7 @@ If you want to contribute to development:
 ```bash
 # Fork the repository on GitHub
 # Clone your fork
-git clone https://github.com/YourUsername/TMDBintros.git
+git clone https://github.com/kernastra/TMDBintros.git
 cd TMDBintros
 
 # Create a feature branch

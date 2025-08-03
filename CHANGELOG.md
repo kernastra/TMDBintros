@@ -39,5 +39,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Known Issues
 - None at initial release
 
-[Unreleased]: https://github.com/YourGitHubUsername/TMDBintros/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/YourGitHubUsername/TMDBintros/releases/tag/v1.0.0
+[Unreleased]: https://github.com/kernastra/TMDBintros/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/kernastra/TMDBintros/releases/tag/v1.0.0

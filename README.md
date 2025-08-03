@@ -66,22 +66,13 @@ pip install yt-dlp
 
 ## Installation
 
-### Option 1: From Jellyfin Plugin Repository (Recommended)
-
-*Coming soon* - This plugin will be available in the official Jellyfin plugin repository once approved.
-
-1. Go to **Dashboard** → **Plugins** → **Catalog**
-2. Search for "TMDB Trailers"
-3. Click **Install**
-4. Restart Jellyfin
-
-### Option 2: Local Installation (Clone & Build)
+### Option 1: Local Installation (Clone & Build)
 
 Perfect for testing, development, or using the latest features:
 
 1. **Quick Installation** (automated):
    ```bash
-   git clone https://github.com/yourusername/TMDBintros.git
+   git clone https://github.com/kernastra/TMDBintros.git
    cd TMDBintros
    ./local-install.sh
    ```
@@ -90,19 +81,17 @@ Perfect for testing, development, or using the latest features:
    - See [LOCAL_INSTALLATION.md](LOCAL_INSTALLATION.md) for detailed instructions
    - Includes troubleshooting and development setup
 
-### Option 3: Manual Installation
+### Option 2: Manual Installation
 
-1. Download the latest release DLL from the [Releases](https://github.com/yourusername/TMDBintros/releases) page
+1. Download the latest release DLL from the [Releases](https://github.com/kernastra/TMDBintros/releases) page
 2. Copy the DLL to your Jellyfin plugins directory (see paths above)
 3. Restart Jellyfin
 
 ### Option 3: Build from Source
 
-### Option 3: Build from Source
-
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/TMDBintros.git
+   git clone https://github.com/kernastra/TMDBintros.git
    cd TMDBintros
    ```
 
@@ -125,7 +114,7 @@ Perfect for testing, development, or using the latest features:
 
 ### Option 2: Manual Plugin Installation
 
-1. Download the latest release DLL from the [Releases](https://github.com/yourusername/TMDBintros/releases) page
+1. Download the latest release DLL from the [Releases](https://github.com/kernastra/TMDBintros/releases) page
 2. Copy the DLL to your Jellyfin plugins directory (see paths above)
 3. Restart Jellyfin
 
@@ -250,7 +239,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you encounter issues or have questions:
 
 1. Check the [troubleshooting section](#troubleshooting)
-2. Search existing [GitHub Issues](https://github.com/yourusername/TMDBintros/issues)
+2. Search existing [GitHub Issues](https://github.com/kernastra/TMDBintros/issues)  
 3. Create a new issue with detailed information including:
    - Jellyfin version
    - Plugin version
@@ -258,20 +247,6 @@ If you encounter issues or have questions:
    - Relevant log entries
    - Steps to reproduce the issue
 
-## Plugin Repository
+## License
 
-This plugin can be made available through the official Jellyfin plugin repository. See [PLUGIN_SUBMISSION.md](PLUGIN_SUBMISSION.md) for details on:
-
-- Submitting to the official Jellyfin plugin repository
-- Creating custom plugin repositories
-- Automated release processes
-- Repository manifest requirements
-
-### For Plugin Developers
-
-The project includes all necessary files for plugin repository integration:
-
-- `manifest.json` - Plugin metadata and version information
-- `.github/workflows/build-release.yml` - Automated CI/CD pipeline
-- `update-manifest.sh` - Helper script for updating checksums
-- `PLUGIN_SUBMISSION.md` - Detailed submission guide
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

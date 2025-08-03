@@ -4,17 +4,17 @@
     "name": "TMDB Trailers",
     "description": "Downloads movie trailers from TMDB for your media library",
     "overview": "This plugin automatically searches for and downloads movie trailers from The Movie Database (TMDB) API, organizing them alongside your movie files for enhanced viewing experience. Features include configurable quality settings, automatic organization, and scheduled processing.",
-    "owner": "YourGitHubUsername",
+    "owner": "kernastra",
     "category": "General",
-    "imageUrl": "https://raw.githubusercontent.com/YourGitHubUsername/TMDBintros/main/images/logo.png",
+    "imageUrl": "https://raw.githubusercontent.com/kernastra/TMDBintros/main/images/logo.png",
     "versions": [
       {
         "version": "1.0.0.0",
         "changelog": "Initial release with TMDB trailer search and download, automatic file organization, and configurable download settings.",
         "targetAbi": "10.8.13.0",
-        "sourceUrl": "https://github.com/YourGitHubUsername/TMDBintros/releases/download/v1.0.0/TMDBintros.dll",
-        "checksum": "SHA256-CHECKSUM-PLACEHOLDER",
-        "timestamp": "2024-08-03T00:00:00Z"
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v1.0.0/TMDBintros.dll",
+        "checksum": "952ba761ade1451cdb8bbd9f2860638c6b437921ab45e51a45fd55fe168c8116",
+        "timestamp": "2025-08-03T07:32:07Z"
       }
     ]
   }
