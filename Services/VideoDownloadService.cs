@@ -195,16 +195,16 @@ public class VideoDownloadService
             var installCommands = new[]
             {
                 // Debian/Ubuntu (most common in Docker containers)
-                ("apt-get", "update && apt-get install -y python3"),
+                ("apt-get", "apt-get update && apt-get install -y python3"),
                 // Alpine Linux (common in lightweight containers)
-                ("apk", "add --no-cache python3"),
+                ("apk", "apk add --no-cache python3"),
                 // CentOS/RHEL/Fedora
-                ("dnf", "install -y python3"),
-                ("yum", "install -y python3"),
+                ("dnf", "dnf install -y python3"),
+                ("yum", "yum install -y python3"),
                 // FreeBSD (TrueNAS Core)
-                ("pkg", "install -y python3"),
+                ("pkg", "pkg install -y python3"),
                 // Arch Linux
-                ("pacman", "-S --noconfirm python3")
+                ("pacman", "pacman -S --noconfirm python3")
             };
 
             foreach (var (packageManager, command) in installCommands)
@@ -233,7 +233,7 @@ public class VideoDownloadService
                             // Try to install Python 3
                             var installProcess = new ProcessStartInfo
                             {
-                                FileName = "sh",
+                                FileName = "bash",
                                 Arguments = $"-c \"{command}\"",
                                 RedirectStandardOutput = true,
                                 RedirectStandardError = true,
@@ -248,6 +248,16 @@ public class VideoDownloadService
                                 var stdout = await install.StandardOutput.ReadToEndAsync();
                                 var stderr = await install.StandardError.ReadToEndAsync();
 
+                                _logger.LogInformation("Installation attempt with {PackageManager}: Exit code {ExitCode}", packageManager, install.ExitCode);
+                                if (!string.IsNullOrEmpty(stdout))
+                                {
+                                    _logger.LogInformation("stdout: {Output}", stdout.Trim());
+                                }
+                                if (!string.IsNullOrEmpty(stderr))
+                                {
+                                    _logger.LogInformation("stderr: {Error}", stderr.Trim());
+                                }
+
                                 if (install.ExitCode == 0)
                                 {
                                     _logger.LogInformation("Successfully installed Python 3 using {PackageManager}", packageManager);
@@ -255,7 +265,17 @@ public class VideoDownloadService
                                     // Verify installation
                                     try
                                     {
-                                        using var verifyProcess = Process.Start(pythonCheck);
+                                        var pythonVersionCheck = new ProcessStartInfo
+                                        {
+                                            FileName = "python3",
+                                            Arguments = "--version",
+                                            RedirectStandardOutput = true,
+                                            RedirectStandardError = true,
+                                            UseShellExecute = false,
+                                            CreateNoWindow = true
+                                        };
+
+                                        using var verifyProcess = Process.Start(pythonVersionCheck);
                                         if (verifyProcess != null)
                                         {
                                             await verifyProcess.WaitForExitAsync();
@@ -267,15 +287,27 @@ public class VideoDownloadService
                                             }
                                         }
                                     }
-                                    catch
+                                    catch (Exception verifyEx)
                                     {
-                                        _logger.LogWarning("Python 3 installation completed but verification failed");
+                                        _logger.LogWarning(verifyEx, "Python 3 installation completed but verification failed");
                                     }
                                 }
                                 else
                                 {
-                                    _logger.LogWarning("Failed to install Python 3 using {PackageManager}. Exit code: {ExitCode}, Error: {Error}", 
-                                        packageManager, install.ExitCode, stderr);
+                                    // Check for specific permission errors
+                                    if (stderr.Contains("Permission denied") || stderr.Contains("Operation not permitted"))
+                                    {
+                                        _logger.LogWarning("Permission denied installing Python 3 with {PackageManager}. Container may not have sufficient privileges.", packageManager);
+                                    }
+                                    else if (stderr.Contains("command not found") || stderr.Contains("not found"))
+                                    {
+                                        _logger.LogDebug("Command not found with {PackageManager}, trying next approach", packageManager);
+                                    }
+                                    else
+                                    {
+                                        _logger.LogWarning("Failed to install Python 3 using {PackageManager}. Exit code: {ExitCode}", 
+                                            packageManager, install.ExitCode);
+                                    }
                                 }
                             }
                         }
@@ -287,11 +319,17 @@ public class VideoDownloadService
                 }
             }
 
-            _logger.LogError("Could not automatically install Python 3. Please install it manually:");
-            _logger.LogError("  Docker/Ubuntu: apt-get update && apt-get install -y python3");
-            _logger.LogError("  Alpine: apk add python3");
-            _logger.LogError("  CentOS/RHEL: dnf install python3");
-            _logger.LogError("  FreeBSD: pkg install python3");
+            _logger.LogError("Could not automatically install Python 3. This may be due to insufficient container permissions.");
+            _logger.LogError("Manual installation options:");
+            _logger.LogError("  For Docker containers, you may need to:");
+            _logger.LogError("    1. Run container as root (add '--user root' to docker run)");
+            _logger.LogError("    2. Or install Python in your Docker image/Dockerfile");
+            _logger.LogError("    3. Or use the standalone version (v2.0.4) instead");
+            _logger.LogError("  Manual commands:");
+            _logger.LogError("    Docker/Ubuntu: apt-get update && apt-get install -y python3");
+            _logger.LogError("    Alpine: apk add python3");
+            _logger.LogError("    CentOS/RHEL: dnf install python3");
+            _logger.LogError("    FreeBSD: pkg install python3");
             
             return false;
         }
