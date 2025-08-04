@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5f",
+    "name": "TMDB Trailers (Bundled yt-dlp)",
+    "description": "Downloads movie trailers from TMDB with bundled yt-dlp - no external dependencies required",
+    "overview": "This plugin automatically searches for and downloads movie trailers from The Movie Database (TMDB) API. **BUNDLED VERSION** includes yt-dlp binaries for all platforms (Linux, FreeBSD, macOS, Windows) - perfect for TrueNAS, Docker, and restricted environments. No additional software installation required. Features configurable quality settings, automatic organization, scheduled processing, and cross-platform compatibility.",
+    "owner": "kernastra",
+    "category": "General",
+    "imageUrl": "",
+    "versions": [
+      {
+        "version": "2.0.0.0",
+        "changelog": "BUNDLED VERSION: Includes yt-dlp binaries for all platforms. No external yt-dlp installation required. Perfect for TrueNAS, Docker, and restricted environments. Automatic platform detection and fallback support.",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.0-bundled/TMDBintros-bundled.zip",
+        "checksum": "8c52ece1a0fbae93bd8da221899d66aa",
+        "timestamp": "2025-08-03T21:25:00Z"
+      }
+    ]
+  }
+]

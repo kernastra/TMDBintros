@@ -10,7 +10,6 @@ using MediaBrowser.Model.Querying;
 using Microsoft.Extensions.Logging;
 using TMDBintros.Configuration;
 using TMDBintros.Models;
-using TMDBintros.Services;
 
 namespace TMDBintros.Services;
 

@@ -28,6 +28,7 @@
   <ItemGroup>
     <None Include="build.yaml" />
     <EmbeddedResource Include="Configuration\configPage.html" />
+    <None Include="Resources\binaries\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

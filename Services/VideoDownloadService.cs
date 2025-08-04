@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -86,9 +88,12 @@ public class VideoDownloadService
 
             _logger.LogDebug("Starting download of YouTube video: {VideoKey} to {OutputPath}", videoKey, outputPath);
 
+            // Get the correct yt-dlp binary path
+            var ytDlpPath = GetYtDlpPath() ?? "yt-dlp";
+
             var processInfo = new ProcessStartInfo
             {
-                FileName = "yt-dlp",
+                FileName = ytDlpPath,
                 Arguments = string.Join(" ", arguments.Select(arg => $"\"{arg}\"")),
                 WorkingDirectory = outputDir,
                 RedirectStandardOutput = true,
@@ -146,16 +151,112 @@ public class VideoDownloadService
     }
 
     /// <summary>
-    /// Checks if yt-dlp is available on the system.
+    /// Gets the path to the bundled yt-dlp binary for the current platform.
+    /// </summary>
+    /// <returns>Path to yt-dlp binary or null if not found.</returns>
+    private string? GetYtDlpPath()
+    {
+        try
+        {
+            // Get the directory where the plugin assembly is located
+            var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+            var pluginDirectory = Path.GetDirectoryName(assemblyLocation);
+            
+            if (string.IsNullOrEmpty(pluginDirectory))
+            {
+                return null;
+            }
+
+            var binariesPath = Path.Combine(pluginDirectory, "Resources", "binaries");
+            
+            // Determine the correct binary based on the platform
+            string binaryName;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                binaryName = "yt-dlp-windows-x64.exe";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                binaryName = "yt-dlp-macos-x64";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+            {
+                binaryName = "yt-dlp-freebsd-x64";
+            }
+            else // Default to Linux
+            {
+                binaryName = "yt-dlp-linux-x64";
+            }
+
+            var ytDlpPath = Path.Combine(binariesPath, binaryName);
+            
+            if (File.Exists(ytDlpPath))
+            {
+                // Ensure the binary is executable on Unix systems
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    try
+                    {
+                        var chmodProcess = new ProcessStartInfo
+                        {
+                            FileName = "chmod",
+                            Arguments = $"+x \"{ytDlpPath}\"",
+                            UseShellExecute = false,
+                            CreateNoWindow = true
+                        };
+                        using var process = Process.Start(chmodProcess);
+                        process?.WaitForExit();
+                    }
+                    catch
+                    {
+                        // Ignore chmod errors - binary might already be executable
+                    }
+                }
+                
+                _logger.LogDebug("Found bundled yt-dlp at: {YtDlpPath}", ytDlpPath);
+                return ytDlpPath;
+            }
+            
+            _logger.LogWarning("Bundled yt-dlp binary not found at: {YtDlpPath}", ytDlpPath);
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting bundled yt-dlp path");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Checks if yt-dlp is available (either bundled or system-installed).
     /// </summary>
     /// <returns>True if yt-dlp is available, false otherwise.</returns>
     private async Task<bool> IsYtDlpAvailableAsync()
+    {
+        // First try to get the bundled version
+        var ytDlpPath = GetYtDlpPath();
+        if (!string.IsNullOrEmpty(ytDlpPath))
+        {
+            return await TestYtDlpBinary(ytDlpPath);
+        }
+        
+        // Fall back to system-installed yt-dlp
+        _logger.LogDebug("Bundled yt-dlp not found, trying system installation");
+        return await TestYtDlpBinary("yt-dlp");
+    }
+
+    /// <summary>
+    /// Tests if a yt-dlp binary is working.
+    /// </summary>
+    /// <param name="binaryPath">Path to the yt-dlp binary.</param>
+    /// <returns>True if the binary works, false otherwise.</returns>
+    private async Task<bool> TestYtDlpBinary(string binaryPath)
     {
         try
         {
             var processInfo = new ProcessStartInfo
             {
-                FileName = "yt-dlp",
+                FileName = binaryPath,
                 Arguments = "--version",
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
@@ -167,10 +268,21 @@ public class VideoDownloadService
             process.Start();
             await process.WaitForExitAsync();
 
-            return process.ExitCode == 0;
+            var success = process.ExitCode == 0;
+            if (success)
+            {
+                _logger.LogDebug("yt-dlp binary is working: {BinaryPath}", binaryPath);
+            }
+            else
+            {
+                _logger.LogWarning("yt-dlp binary test failed: {BinaryPath}, exit code: {ExitCode}", binaryPath, process.ExitCode);
+            }
+            
+            return success;
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Failed to test yt-dlp binary: {BinaryPath}", binaryPath);
             return false;
         }
     }
