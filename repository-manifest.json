@@ -9,12 +9,12 @@
     "imageUrl": "",
     "versions": [
       {
-        "version": "2.0.0.0",
-        "changelog": "🎯 BUNDLED VERSION RELEASE\n\n✅ NEW: Includes yt-dlp binaries for all platforms\n✅ NEW: Automatic platform detection (Linux/FreeBSD/macOS/Windows)\n✅ NEW: Zero external dependencies required\n✅ NEW: TrueNAS Core/SCALE ready\n✅ NEW: Docker container compatible\n✅ NEW: Smart fallback to system yt-dlp\n✅ FIXED: All configuration page issues\n✅ IMPROVED: Enhanced error handling and logging\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Ready to download trailers immediately after installation!",
+        "version": "2.0.1.0",
+        "changelog": "🚀 ENHANCED BUNDLED VERSION\n\n✅ FIXED: Improved plugin directory detection for TrueNAS and Docker\n✅ FIXED: Multi-path search for Resources directory\n✅ IMPROVED: Enhanced diagnostic logging for troubleshooting\n✅ IMPROVED: Better error handling for different Jellyfin setups\n✅ CONFIRMED: Works with TrueNAS Core/SCALE plugin structure\n\n🔧 **Technical Improvements:**\n• Checks multiple possible paths for bundled binaries\n• Enhanced logging shows exactly where plugin looks for files\n• Robust path resolution for various Jellyfin installations\n• Better parent directory detection\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Resolves 'yt-dlp not available' errors from v2.0.0!",
         "targetAbi": "10.8.13.0",
-        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.0-bundled/TMDBintros-bundled.zip",
-        "checksum": "8c52ece1a0fbae93bd8da221899d66aa",
-        "timestamp": "2025-08-03T21:25:00Z"
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.1-bundled-enhanced/TMDBintros-bundled-enhanced.zip",
+        "checksum": "20c61ba737ef75aed07aff429a406cf1",
+        "timestamp": "2025-08-03T23:41:00Z"
       }
     ]
   }
