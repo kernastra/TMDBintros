@@ -16,6 +16,14 @@
         "timestamp": "2025-08-04T05:02:00Z"
       },
       {
+        "version": "2.0.5.0",
+        "changelog": "🐍 AUTOMATIC PYTHON INSTALLATION!\n\n✅ NEW: Automatic Python 3 detection and installation\n✅ NEW: Multi-package manager support (apt-get, apk, dnf, yum, pkg, pacman)\n✅ NEW: Smart container environment detection\n✅ FIXED: Python dependency errors resolved automatically\n✅ IMPROVED: Zero-touch installation for Docker/TrueNAS environments\n\n🔧 **Technical Features:**\n• Detects missing Python 3 and installs automatically\n• Supports Debian/Ubuntu (apt-get), Alpine (apk), CentOS/RHEL (dnf/yum)\n• FreeBSD (pkg) support for TrueNAS Core\n• Arch Linux (pacman) compatibility\n• Comprehensive error handling and logging\n• Installation verification with version checking\n\n📦 Package size: ~15MB (yt-dlp Python scripts + auto-installer)\n🎬 Completely automated Python dependency resolution!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.5/TMDBintros-auto-python.zip",
+        "checksum": "TBD",
+        "timestamp": "2024-12-19T18:00:00Z"
+      },
+      {
         "version": "2.0.2.0",
         "changelog": "🔧 BINARY EXECUTION FIX\n\n✅ FIXED: Exit code 127 error - enhanced chmod with multiple strategies\n✅ FIXED: Binary permission issues on TrueNAS and Docker\n✅ IMPROVED: Enhanced diagnostic logging for binary execution failures\n✅ NEW: File permission verification and reporting\n✅ NEW: Binary architecture analysis with 'file' command\n✅ NEW: Specific error guidance for common exit codes\n\n🛠️ **Technical Improvements:**\n• Multiple chmod approaches: 755, +x, u+x\n• Async method support for better performance\n• Detailed STDOUT/STDERR capture\n• File permission diagnostics (ls -la output)\n• Architecture mismatch detection\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Specifically fixes 'yt-dlp binary test failed: exit code: 127' error!",
         "targetAbi": "10.8.13.0",

@@ -151,6 +151,158 @@ public class VideoDownloadService
     }
 
     /// <summary>
+    /// Ensures Python 3 is available, installing it if necessary.
+    /// </summary>
+    /// <returns>True if Python 3 is available, false otherwise.</returns>
+    private async Task<bool> EnsurePython3Available()
+    {
+        try
+        {
+            // First check if Python 3 is already available
+            var pythonCheck = new ProcessStartInfo
+            {
+                FileName = "python3",
+                Arguments = "--version",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            try
+            {
+                using var process = Process.Start(pythonCheck);
+                if (process != null)
+                {
+                    await process.WaitForExitAsync();
+                    if (process.ExitCode == 0)
+                    {
+                        var output = await process.StandardOutput.ReadToEndAsync();
+                        _logger.LogInformation("Python 3 is already available: {Version}", output.Trim());
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation("Python 3 not found, will attempt to install: {Error}", ex.Message);
+            }
+
+            // Python 3 not available, try to install it
+            _logger.LogInformation("Python 3 not found, attempting automatic installation...");
+
+            // Detect the package manager and install Python 3
+            var installCommands = new[]
+            {
+                // Debian/Ubuntu (most common in Docker containers)
+                ("apt-get", "update && apt-get install -y python3"),
+                // Alpine Linux (common in lightweight containers)
+                ("apk", "add --no-cache python3"),
+                // CentOS/RHEL/Fedora
+                ("dnf", "install -y python3"),
+                ("yum", "install -y python3"),
+                // FreeBSD (TrueNAS Core)
+                ("pkg", "install -y python3"),
+                // Arch Linux
+                ("pacman", "-S --noconfirm python3")
+            };
+
+            foreach (var (packageManager, command) in installCommands)
+            {
+                try
+                {
+                    // Check if package manager exists
+                    var checkPM = new ProcessStartInfo
+                    {
+                        FileName = "which",
+                        Arguments = packageManager,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    using var checkProcess = Process.Start(checkPM);
+                    if (checkProcess != null)
+                    {
+                        await checkProcess.WaitForExitAsync();
+                        if (checkProcess.ExitCode == 0)
+                        {
+                            _logger.LogInformation("Found package manager: {PackageManager}, attempting installation", packageManager);
+
+                            // Try to install Python 3
+                            var installProcess = new ProcessStartInfo
+                            {
+                                FileName = "sh",
+                                Arguments = $"-c \"{command}\"",
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true,
+                                UseShellExecute = false,
+                                CreateNoWindow = true
+                            };
+
+                            using var install = Process.Start(installProcess);
+                            if (install != null)
+                            {
+                                await install.WaitForExitAsync();
+                                var stdout = await install.StandardOutput.ReadToEndAsync();
+                                var stderr = await install.StandardError.ReadToEndAsync();
+
+                                if (install.ExitCode == 0)
+                                {
+                                    _logger.LogInformation("Successfully installed Python 3 using {PackageManager}", packageManager);
+                                    
+                                    // Verify installation
+                                    try
+                                    {
+                                        using var verifyProcess = Process.Start(pythonCheck);
+                                        if (verifyProcess != null)
+                                        {
+                                            await verifyProcess.WaitForExitAsync();
+                                            if (verifyProcess.ExitCode == 0)
+                                            {
+                                                var version = await verifyProcess.StandardOutput.ReadToEndAsync();
+                                                _logger.LogInformation("Python 3 installation verified: {Version}", version.Trim());
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        _logger.LogWarning("Python 3 installation completed but verification failed");
+                                    }
+                                }
+                                else
+                                {
+                                    _logger.LogWarning("Failed to install Python 3 using {PackageManager}. Exit code: {ExitCode}, Error: {Error}", 
+                                        packageManager, install.ExitCode, stderr);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogDebug("Package manager {PackageManager} not available: {Error}", packageManager, ex.Message);
+                }
+            }
+
+            _logger.LogError("Could not automatically install Python 3. Please install it manually:");
+            _logger.LogError("  Docker/Ubuntu: apt-get update && apt-get install -y python3");
+            _logger.LogError("  Alpine: apk add python3");
+            _logger.LogError("  CentOS/RHEL: dnf install python3");
+            _logger.LogError("  FreeBSD: pkg install python3");
+            
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during Python 3 installation attempt");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Gets the path to the bundled yt-dlp binary for the current platform.
     /// </summary>
     /// <returns>Path to yt-dlp binary or null if not found.</returns>
@@ -386,6 +538,13 @@ public class VideoDownloadService
     /// <returns>True if yt-dlp is available, false otherwise.</returns>
     private async Task<bool> IsYtDlpAvailableAsync()
     {
+        // First ensure Python 3 is available
+        if (!await EnsurePython3Available())
+        {
+            _logger.LogError("Python 3 is not available and could not be installed automatically");
+            return false;
+        }
+
         // First try to get the bundled version
         var ytDlpPath = await GetYtDlpPath();
         if (!string.IsNullOrEmpty(ytDlpPath))

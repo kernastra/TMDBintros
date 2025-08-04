@@ -9,12 +9,12 @@
     "imageUrl": "",
     "versions": [
       {
-        "version": "2.0.4.0",
-        "changelog": "🚀 TRUE STANDALONE VERSION - NO PYTHON REQUIRED!\n\n✅ FIXED: Replaced Python scripts with true standalone executables\n✅ FIXED: 'python3': No such file or directory error\n✅ NEW: Native ELF/PE executables with embedded Python interpreter\n✅ NEW: Zero dependency installation - no Python 3 needed\n✅ IMPROVED: Statically linked binaries work on any compatible system\n\n🔧 **Technical Changes:**\n• Linux: ELF 64-bit statically linked executable (27MB)\n• Windows: PE executable (18MB)\n• macOS: Mach-O executable (32MB)\n• FreeBSD: Compatible Linux binary\n• All binaries are self-contained with no external dependencies\n\n📦 Package size: ~56MB (true standalone executables)\n🎬 Fixes Python dependency issues completely!",
+        "version": "2.0.2.0",
+        "changelog": "� BINARY EXECUTION FIX + PYTHON SUPPORT\n\n✅ FIXED: Exit code 127 error - enhanced chmod with multiple strategies\n✅ FIXED: Binary permission issues on TrueNAS and Docker\n✅ WORKS: With Python 3 installed (recommended approach)\n✅ IMPROVED: Enhanced diagnostic logging for binary execution failures\n✅ NEW: File permission verification and reporting\n✅ NEW: Binary architecture analysis with 'file' command\n✅ NEW: Specific error guidance for common exit codes\n\n�️ **Requirements:**\n• Python 3 installed in container/system\n• Enhanced logging shows exactly what's happening\n• Multiple chmod approaches for compatibility\n\n📦 Package size: ~56MB (includes yt-dlp Python scripts)\n🎬 Works perfectly with Python 3 installed!",
         "targetAbi": "10.8.13.0",
-        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.4-standalone/TMDBintros-bundled-standalone.zip",
-        "checksum": "9c47c9b3e1abdbccc766c34ee7aa0a8e",
-        "timestamp": "2025-08-04T05:02:00Z"
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.2-bundled-fixed/TMDBintros-bundled-v2.0.2.zip",
+        "checksum": "cc899d640ecb93a87785b3c9f3756f5b",
+        "timestamp": "2025-08-04T04:02:00Z"
       }
     ]
   }
