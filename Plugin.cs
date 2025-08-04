@@ -41,17 +41,15 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public override string Description => "Downloads movie trailers from TMDB with bundled yt-dlp";
 
     /// <inheritdoc />
+    public override string ConfigurationFileName => "TMDBintros.xml";
+
+    /// <inheritdoc />
     public IEnumerable<PluginPageInfo> GetPages()
     {
-        var pages = new[]
+        yield return new PluginPageInfo
         {
-            new PluginPageInfo
-            {
-                Name = "TMDB Trailers",
-                EmbeddedResourcePath = "TMDBintros.Configuration.configPage.html"
-            }
+            Name = Name,
+            EmbeddedResourcePath = GetType().Namespace + ".Configuration.configPage.html"
         };
-        
-        return pages;
     }
 }

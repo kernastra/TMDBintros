@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "2.1.0.0",
+        "changelog": "🔧 EMBEDDED RESOURCE FIX - DEFINITIVE SETTINGS SOLUTION!\n\n✅ FIXED: Configuration page HTML properly embedded in DLL\n✅ FIXED: \"No settings\" error with correct resource embedding\n✅ VERIFIED: EmbeddedResource build process working correctly\n✅ TESTED: strings command confirms HTML in compiled assembly\n✅ IMPROVED: Clean project file with proper resource configuration\n\n🛠️ **Technical Improvements:**\n• Fixed embedded resource compilation issues\n• Verified Configuration\\configPage.html is in TMDBintros.dll\n• Corrected project file structure for .NET SDK\n• Clean build process with proper dependency resolution\n• Explicit resource path: \"TMDBintros.Configuration.configPage.html\"\n\n📦 Package size: ~15MB (yt-dlp Python scripts + embedded HTML fix)\n🎬 Guaranteed working settings page - HTML confirmed in DLL!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.1.0/TMDBintros-embedded-fix-v2.1.0.zip",
+        "checksum": "d174c146b7f2e326bafa8813606908c9",
+        "timestamp": "2025-08-04T17:30:00Z"
+      },
+      {
         "version": "2.0.9.0",
         "changelog": "🔧 SETTINGS PAGE FIX v2!\n\n✅ FIXED: Plugin settings page registration - hardcoded resource path\n✅ FIXED: \"No settings\" error with explicit configuration page setup\n✅ IMPROVED: Simplified page name for better recognition\n✅ ENHANCED: Added Description property for better plugin identification\n✅ VERIFIED: Configuration page properly embedded and accessible\n\n🛠️ **Technical Improvements:**\n• Explicit EmbeddedResourcePath: \"TMDBintros.Configuration.configPage.html\"\n• Simplified GetPages() implementation for better compatibility\n• Added Description override for plugin identification\n• Direct page name specification\n\n📦 Package size: ~15MB (yt-dlp Python scripts + settings fix)\n🎬 Definitive fix for settings page access issues!",
         "targetAbi": "10.8.13.0",
