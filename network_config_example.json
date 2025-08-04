@@ -1,0 +1,29 @@
+{
+  "tmdb_api_key": "9d6e23004c15bbfb434479fcaac0a844",
+  "remote_share_path": "/mnt/jellyfin-movies",
+  "quality": "best",
+  "network": {
+    "type": "smb",
+    "server": "192.168.1.100",
+    "share": "movies",
+    "username": "myuser",
+    "password": "mypass",
+    "domain": "WORKGROUP",
+    "mount_point": "/mnt/jellyfin-movies",
+    "auto_mount": true
+  },
+  "movies": [
+    {
+      "title": "The Matrix",
+      "year": 1999
+    },
+    {
+      "title": "Inception", 
+      "year": 2010
+    },
+    {
+      "title": "Interstellar",
+      "year": 2014
+    }
+  ]
+}

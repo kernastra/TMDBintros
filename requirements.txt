@@ -1,0 +1,8 @@
+requests>=2.31.0
+yt-dlp>=2023.7.6
+python-dotenv>=1.0.0
+
+# Optional dependencies for monitoring features
+watchdog>=3.0.0      # For real-time file system monitoring (tmdb_monitor.py)
+schedule>=1.2.0      # For scheduled scanning (tmdb_scheduler.py)
+flask>=2.3.0         # For web dashboard (tmdb_dashboard.py)

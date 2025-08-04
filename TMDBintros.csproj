@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>TMDB Trailers Plugin</AssemblyTitle>
     <AssemblyDescription>A Jellyfin plugin that downloads movie trailers from TMDB</AssemblyDescription>
-    <AssemblyVersion>2.1.0.0</AssemblyVersion>
-    <FileVersion>2.1.0.0</FileVersion>
-    <Version>2.1.0</Version>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
+    <Version>2.2.0</Version>
     <AssemblyCompany>YourName</AssemblyCompany>
     <Product>Jellyfin Plugin</Product>
     <Copyright>Copyright © YourName 2024</Copyright>
@@ -29,6 +29,7 @@
   <ItemGroup>
     <None Include="build.yaml" />
     <EmbeddedResource Include="Configuration\configPage.html" />
+    <EmbeddedResource Include="Configuration\configurationpage.html" />
     <None Include="Resources\binaries\**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

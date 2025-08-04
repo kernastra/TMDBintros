@@ -1,0 +1,109 @@
+# Docker Ignore File for TMDB Trailer Downloader
+# Prevents unnecessary files from being included in Docker build context
+
+# ================================
+# Environment and Configuration
+# ================================
+.env
+.env.*
+!.env.docker
+!.env.example
+*.env.local
+*.env.prod
+config.json
+config.json.*
+
+# ================================
+# Logs and Runtime Data
+# ================================
+logs/
+*.log
+*.log.*
+debug.log
+error.log
+tmdb-*.log
+
+# ================================
+# Cache and Downloads
+# ================================
+cache/
+downloads/
+media/
+trailers/
+test_movies/
+*.mp4
+*.mkv
+*.avi
+*.mov
+
+# ================================
+# Development Files
+# ================================
+.git/
+.gitignore
+*.md
+!README.md
+!SERVICES.md
+docs/
+examples/
+
+# ================================
+# IDE and Editor Files
+# ================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# ================================
+# Python Development
+# ================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+.tox/
+venv/
+env/
+.venv/
+
+# ================================
+# OS Files
+# ================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ================================
+# Build and Distribution
+# ================================
+build/
+dist/
+*.egg-info/
+
+# ================================
+# Test and Backup Files
+# ================================
+test_*/
+backup_*/
+*.backup
+*.bak
+*.tmp
+
+# ================================
+# Network Mount Points
+# ================================
+mount/
+mnt/
+network/
+shares/
+
+# ================================
+# Docker Development
+# ================================
+docker-compose.override.yml
+docker-compose.dev.yml
+Dockerfile.dev

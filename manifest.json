@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "2.2.0.0",
+        "changelog": "🔧 DUAL CONFIG FIX - MULTIPLE CONFIGURATION APPROACHES!\n\n✅ ADDED: Dual embedded HTML files (configPage.html + configurationpage.html)\n✅ CHANGED: Page name to \"Configuration\" for better recognition\n✅ VERIFIED: Both HTML files confirmed embedded in DLL\n✅ TESTED: Alternative resource naming for maximum compatibility\n✅ IMPROVED: Different GetPages() implementation pattern\n\n🛠️ **Technical Improvements:**\n• Multiple embedded config files for fallback compatibility\n• Changed page name from plugin name to \"Configuration\"\n• Alternative resource path: configurationpage.html\n• Classic GetPages() pattern with array return\n• Verified dual embedding: strings shows both HTML files\n\n📦 Package size: ~15MB (yt-dlp Python scripts + dual config files)\n🎬 Multiple configuration approaches for maximum compatibility!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.2.0/TMDBintros-dual-config-v2.2.0.zip",
+        "checksum": "920fcaff51a2483c567ab95f6cd999f0",
+        "timestamp": "2025-08-04T18:00:00Z"
+      },
+      {
         "version": "2.1.0.0",
         "changelog": "🔧 EMBEDDED RESOURCE FIX - DEFINITIVE SETTINGS SOLUTION!\n\n✅ FIXED: Configuration page HTML properly embedded in DLL\n✅ FIXED: \"No settings\" error with correct resource embedding\n✅ VERIFIED: EmbeddedResource build process working correctly\n✅ TESTED: strings command confirms HTML in compiled assembly\n✅ IMPROVED: Clean project file with proper resource configuration\n\n🛠️ **Technical Improvements:**\n• Fixed embedded resource compilation issues\n• Verified Configuration\\configPage.html is in TMDBintros.dll\n• Corrected project file structure for .NET SDK\n• Clean build process with proper dependency resolution\n• Explicit resource path: \"TMDBintros.Configuration.configPage.html\"\n\n📦 Package size: ~15MB (yt-dlp Python scripts + embedded HTML fix)\n🎬 Guaranteed working settings page - HTML confirmed in DLL!",
         "targetAbi": "10.8.13.0",

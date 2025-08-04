@@ -1,0 +1,231 @@
+# TMDB Trailer Downloader v3.0.0 - Docker Compose
+# Production-ready setup with monitoring, scheduling, and web dashboard
+
+version: '3.8'
+
+services:
+  # One-time scanner service
+  tmdb-scanner:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE:-}
+        VERSION: ${VERSION:-v3.0.0}
+    image: tmdb-trailer-downloader:${VERSION:-v3.0.0}
+    container_name: tmdb-scanner
+    restart: "no"  # Run once and exit
+    environment:
+      # TMDB Configuration
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      
+      # Jellyfin Configuration
+      - JELLYFIN_MOVIES_PATH=/movies
+      
+      # Network Share Configuration (if using)
+      - NETWORK_ENABLED=${NETWORK_ENABLED:-false}
+      - NETWORK_TYPE=${NETWORK_TYPE:-smb}
+      - NETWORK_SERVER=${NETWORK_SERVER:-}
+      - NETWORK_SHARE=${NETWORK_SHARE:-}
+      - NETWORK_USERNAME=${NETWORK_USERNAME:-}
+      - NETWORK_PASSWORD=${NETWORK_PASSWORD:-}
+      - NETWORK_DOMAIN=${NETWORK_DOMAIN:-WORKGROUP}
+      - NETWORK_MOUNT_POINT=/mnt/network
+      
+      # Download Configuration
+      - DOWNLOAD_QUALITY=${DOWNLOAD_QUALITY:-best}
+      - MAX_TRAILERS_PER_MOVIE=${MAX_TRAILERS_PER_MOVIE:-3}
+      - SKIP_EXISTING=${SKIP_EXISTING:-true}
+      
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FILE=/app/logs/tmdb-scanner.log
+    volumes:
+      # Mount your Jellyfin movies directory
+      - ${HOST_MOVIES_PATH:-./movies}:/movies
+      # Persistent logs
+      - ./logs:/app/logs
+      # Cache directory
+      - ./cache:/app/cache
+      # Environment file (optional)
+      - ./.env:/app/.env:ro
+    command: ["python3", "enhanced_downloader.py", "--scan-existing"]
+    networks:
+      - tmdb-network
+    profiles:
+      - scanner
+      - all
+
+  # Real-time monitoring service
+  tmdb-monitor:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE:-}
+        VERSION: ${VERSION:-v3.0.0}
+    image: tmdb-trailer-downloader:${VERSION:-v3.0.0}
+    container_name: tmdb-monitor
+    restart: unless-stopped
+    environment:
+      # TMDB Configuration
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      
+      # Jellyfin Configuration
+      - JELLYFIN_MOVIES_PATH=/movies
+      
+      # Network Share Configuration
+      - NETWORK_ENABLED=${NETWORK_ENABLED:-false}
+      - NETWORK_TYPE=${NETWORK_TYPE:-smb}
+      - NETWORK_SERVER=${NETWORK_SERVER:-}
+      - NETWORK_SHARE=${NETWORK_SHARE:-}
+      - NETWORK_USERNAME=${NETWORK_USERNAME:-}
+      - NETWORK_PASSWORD=${NETWORK_PASSWORD:-}
+      - NETWORK_DOMAIN=${NETWORK_DOMAIN:-WORKGROUP}
+      - NETWORK_MOUNT_POINT=/mnt/network
+      
+      # Monitoring Configuration
+      - ENABLE_MONITORING=true
+      - MONITOR_TYPE=filesystem
+      - MONITOR_DELAY=${MONITOR_DELAY:-5}
+      
+      # Download Configuration
+      - DOWNLOAD_QUALITY=${DOWNLOAD_QUALITY:-best}
+      - MAX_TRAILERS_PER_MOVIE=${MAX_TRAILERS_PER_MOVIE:-3}
+      - SKIP_EXISTING=${SKIP_EXISTING:-true}
+      
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FILE=/app/logs/tmdb-monitor.log
+    volumes:
+      # Mount your Jellyfin movies directory
+      - ${HOST_MOVIES_PATH:-./movies}:/movies
+      # Persistent logs
+      - ./logs:/app/logs
+      # Cache directory
+      - ./cache:/app/cache
+      # Environment file (optional)
+      - ./.env:/app/.env:ro
+    command: ["python3", "tmdb_monitor.py", "--log-level", "${LOG_LEVEL:-INFO}"]
+    networks:
+      - tmdb-network
+    profiles:
+      - monitor
+      - all
+    # Privileged mode needed for network mounting (optional)
+    privileged: ${PRIVILEGED_MODE:-false}
+    devices:
+      - /dev/fuse:/dev/fuse
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+
+  # Scheduled scanning service
+  tmdb-scheduler:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE:-}
+        VERSION: ${VERSION:-v3.0.0}
+    image: tmdb-trailer-downloader:${VERSION:-v3.0.0}
+    container_name: tmdb-scheduler
+    restart: unless-stopped
+    environment:
+      # TMDB Configuration
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      
+      # Jellyfin Configuration
+      - JELLYFIN_MOVIES_PATH=/movies
+      
+      # Network Share Configuration
+      - NETWORK_ENABLED=${NETWORK_ENABLED:-false}
+      - NETWORK_TYPE=${NETWORK_TYPE:-smb}
+      - NETWORK_SERVER=${NETWORK_SERVER:-}
+      - NETWORK_SHARE=${NETWORK_SHARE:-}
+      - NETWORK_USERNAME=${NETWORK_USERNAME:-}
+      - NETWORK_PASSWORD=${NETWORK_PASSWORD:-}
+      - NETWORK_DOMAIN=${NETWORK_DOMAIN:-WORKGROUP}
+      - NETWORK_MOUNT_POINT=/mnt/network
+      
+      # Scheduling Configuration
+      - SCHEDULE_ENABLED=true
+      - SCHEDULE_INTERVAL=${SCHEDULE_INTERVAL:-60}
+      
+      # Download Configuration
+      - DOWNLOAD_QUALITY=${DOWNLOAD_QUALITY:-best}
+      - MAX_TRAILERS_PER_MOVIE=${MAX_TRAILERS_PER_MOVIE:-3}
+      - SKIP_EXISTING=${SKIP_EXISTING:-true}
+      
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FILE=/app/logs/tmdb-scheduler.log
+    volumes:
+      # Mount your Jellyfin movies directory
+      - ${HOST_MOVIES_PATH:-./movies}:/movies
+      # Persistent logs
+      - ./logs:/app/logs
+      # Cache directory
+      - ./cache:/app/cache
+      # Environment file (optional)
+      - ./.env:/app/.env:ro
+    command: ["python3", "tmdb_scheduler.py", "--interval", "${SCHEDULE_INTERVAL:-60}", "--log-level", "${LOG_LEVEL:-INFO}"]
+    networks:
+      - tmdb-network
+    profiles:
+      - scheduler
+      - all
+
+  # Web dashboard with monitoring and statistics
+  tmdb-dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE:-}
+        VERSION: ${VERSION:-v3.0.0}
+    image: tmdb-trailer-downloader:${VERSION:-v3.0.0}
+    container_name: tmdb-dashboard
+    restart: unless-stopped
+    environment:
+      # TMDB Configuration (for API status checks)
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      
+      # Jellyfin Configuration (for movie statistics)  
+      - JELLYFIN_MOVIES_PATH=/movies
+      
+      # Dashboard Configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DASHBOARD_HOST=0.0.0.0
+      - DASHBOARD_PORT=8080
+    volumes:
+      # Read-only access to movies for statistics
+      - ${HOST_MOVIES_PATH:-./movies}:/movies:ro
+      # Read-only access to logs for display
+      - ./logs:/app/logs:ro
+      # Read-only access to cache for statistics
+      - ./cache:/app/cache:ro
+      # Environment file for configuration
+      - ./.env:/app/.env:ro
+    ports:
+      - "${DASHBOARD_PORT:-8080}:8080"
+    command: ["python3", "tmdb_dashboard.py", "--host", "0.0.0.0", "--port", "8080"]
+    networks:
+      - tmdb-network
+    profiles:
+      - dashboard
+      - all
+    depends_on:
+      - tmdb-monitor  # Dashboard shows monitor status
+
+networks:
+  tmdb-network:
+    driver: bridge
+    name: tmdb-network
+
+volumes:
+  tmdb-logs:
+    driver: local
+  tmdb-cache:
+    driver: local

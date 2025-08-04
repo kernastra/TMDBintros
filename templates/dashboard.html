@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMDB Trailer Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .panel-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #ecf0f1;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .panel-content {
+            padding: 1.5rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-running { background: #27ae60; }
+        .status-stopped { background: #e74c3c; }
+        .status-idle { background: #f39c12; }
+        
+        .movie-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .movie-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .movie-item:last-child {
+            border-bottom: none;
+        }
+        
+        .movie-name {
+            font-weight: 500;
+        }
+        
+        .trailer-count {
+            background: #3498db;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .log-entry {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #dee2e6;
+        }
+        
+        .log-error { border-left-color: #e74c3c; }
+        .log-warning { border-left-color: #f39c12; }
+        .log-info { border-left-color: #3498db; }
+        .log-debug { border-left-color: #95a5a6; }
+        
+        .refresh-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .refresh-btn:hover {
+            background: #2980b9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 TMDB Trailer Dashboard</h1>
+    </div>
+    
+    <div class="container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total_movies }}</div>
+                <div class="stat-label">Total Movies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.movies_with_trailers }}</div>
+                <div class="stat-label">Movies with Trailers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total_trailers }}</div>
+                <div class="stat-label">Total Trailers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ "%.1f GB"|format(stats.disk_usage / 1024 / 1024 / 1024) }}</div>
+                <div class="stat-label">Disk Usage</div>
+            </div>
+        </div>
+        
+        <!-- Service Status -->
+        <div class="panel">
+            <div class="panel-header">
+                Service Status
+                <button class="refresh-btn" onclick="refreshData()">Refresh</button>
+            </div>
+            <div class="panel-content">
+                <div class="service-list" id="service-list">
+                    <div class="movie-item">
+                        <span>
+                            <span class="status-indicator status-running"></span>
+                            Real-time Monitor
+                        </span>
+                        <span class="trailer-count">Running</span>
+                    </div>
+                    <div class="movie-item">
+                        <span>
+                            <span class="status-indicator status-running"></span>
+                            Scheduled Scanner
+                        </span>
+                        <span class="trailer-count">Running</span>
+                    </div>
+                    <div class="movie-item">
+                        <span>
+                            <span class="status-indicator status-idle"></span>
+                            TMDB API
+                        </span>
+                        <span class="trailer-count">Connected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Movies -->
+        <div class="panel">
+            <div class="panel-header">Movies Overview</div>
+            <div class="panel-content">
+                <div class="movie-list" id="movie-list">
+                    <!-- Movies will be loaded via JavaScript -->
+                    <div class="movie-item">
+                        <span class="movie-name">Loading movies...</span>
+                        <span class="trailer-count">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Logs -->
+        <div class="panel">
+            <div class="panel-header">Recent Activity</div>
+            <div class="panel-content">
+                <div id="recent-logs">
+                    <!-- Logs will be loaded via JavaScript -->
+                    <div class="log-entry log-info">
+                        Loading recent activity...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-refresh functionality
+        function refreshData() {
+            loadMovies();
+            loadLogs();
+            loadServices();
+        }
+        
+        function loadMovies() {
+            fetch('/api/movies')
+                .then(response => response.json())
+                .then(movies => {
+                    const movieList = document.getElementById('movie-list');
+                    movieList.innerHTML = movies.map(movie => `
+                        <div class="movie-item">
+                            <span class="movie-name">${movie.name}</span>
+                            <span class="trailer-count">${movie.trailer_count} trailers</span>
+                        </div>
+                    `).join('') || '<div class="movie-item"><span>No movies found</span></div>';
+                })
+                .catch(error => {
+                    console.error('Error loading movies:', error);
+                });
+        }
+        
+        function loadLogs() {
+            fetch('/api/logs')
+                .then(response => response.json())
+                .then(logs => {
+                    const logContainer = document.getElementById('recent-logs');
+                    logContainer.innerHTML = logs.slice(0, 10).map(log => `
+                        <div class="log-entry log-${log.level.toLowerCase()}">
+                            <strong>${log.timestamp}</strong> [${log.service}] ${log.message}
+                        </div>
+                    `).join('') || '<div class="log-entry">No recent activity</div>';
+                })
+                .catch(error => {
+                    console.error('Error loading logs:', error);
+                });
+        }
+        
+        function loadServices() {
+            fetch('/api/services')
+                .then(response => response.json())
+                .then(services => {
+                    const serviceList = document.getElementById('service-list');
+                    serviceList.innerHTML = Object.entries(services).map(([name, service]) => `
+                        <div class="movie-item">
+                            <span>
+                                <span class="status-indicator status-${service.status}"></span>
+                                ${name.charAt(0).toUpperCase() + name.slice(1)}
+                            </span>
+                            <span class="trailer-count">${service.status}</span>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Error loading services:', error);
+                });
+        }
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            
+            // Auto-refresh every 30 seconds
+            setInterval(refreshData, 30000);
+        });
+    </script>
+</body>
+</html>
