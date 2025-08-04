@@ -1,9 +1,43 @@
 [
   {
     "guid": "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5f",
+    "name": "TMDB Trailers (Bundled yt-dlp)",
+    "description": "Downloads movie trailers from TMDB with bundled yt-dlp - no external dependencies required",
+    "overview": "🎬 **SELF-CONTAINED TRAILER DOWNLOADER**\n\nThis plugin automatically downloads movie trailers from The Movie Database (TMDB) API with **ZERO external dependencies**.\n\n✅ **BUNDLED yt-dlp**: Includes binaries for Linux, FreeBSD, macOS, Windows\n✅ **TrueNAS READY**: Works out-of-the-box on TrueNAS Core/SCALE\n✅ **DOCKER COMPATIBLE**: No external tool installation needed\n✅ **AUTO-DETECTION**: Automatically selects correct binary for your platform\n✅ **SMART FALLBACK**: Falls back to system yt-dlp if needed\n\n🔧 **Features:**\n• Configurable video quality (480p/720p/1080p)\n• Automatic file organization\n• Scheduled processing\n• Custom trailer folder naming\n• Duration filtering\n• Cross-platform compatibility\n\n📦 **Perfect for:**\n• TrueNAS servers (Core/SCALE)\n• Docker containers\n• Restricted environments\n• Users who don't want to install yt-dlp manually\n\n🚀 **Installation:** Just add this repository URL to Jellyfin and install - no additional setup required!",
+    "owner": "kernastra",
+    "category": "General",
+    "versions": [
+      {
+        "version": "2.0.0.0",
+        "changelog": "🎯 BUNDLED VERSION RELEASE\n\n✅ NEW: Includes yt-dlp binaries for all platforms\n✅ NEW: Automatic platform detection (Linux/FreeBSD/macOS/Windows)\n✅ NEW: Zero external dependencies required\n✅ NEW: TrueNAS Core/SCALE ready\n✅ NEW: Docker container compatible\n✅ NEW: Smart fallback to system yt-dlp\n✅ FIXED: All configuration page issues\n✅ IMPROVED: Enhanced error handling and logging\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Ready to download trailers immediately after installation!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.0-bundled/TMDBintros-bundled.zip",
+        "checksum": "8c52ece1a0fbae93bd8da221899d66aa",
+        "timestamp": "2025-08-03T21:25:00Z"
+      },
+      {
+        "version": "1.0.2.0",
+        "changelog": "Fixed configuration page JavaScript to resolve loading/saving issues - settings now save properly without hanging.",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v1.0.2/TMDBintros.zip",
+        "checksum": "1ae3506dd99e1d9e1745e39fafb08ca5",
+        "timestamp": "2025-08-03T16:15:00Z"
+      },
+      {
+        "version": "1.0.1.0",
+        "changelog": "Fixed plugin package format for Jellyfin compatibility - simplified zip structure to resolve installation issues.",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v1.0.1/TMDBintros.zip",
+        "checksum": "fba1596316acce5ea707ed4e5c7dae71",
+        "timestamp": "2025-08-03T16:07:00Z"
+      }
+    ]
+  },
+  {
+    "guid": "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5e",
     "name": "TMDB Trailers",
     "description": "Downloads movie trailers from TMDB for your media library",
-    "overview": "This plugin automatically searches for and downloads movie trailers from The Movie Database (TMDB) API, organizing them alongside your movie files for enhanced viewing experience. Features include configurable quality settings, automatic organization, and scheduled processing.",
+    "overview": "This plugin automatically searches for and downloads movie trailers from The Movie Database (TMDB) API, organizing them alongside your movie files for enhanced viewing experience. Features include configurable quality settings, automatic organization, and scheduled processing.\n\n⚠️ **NOTE**: This version requires yt-dlp to be installed separately. For zero-dependency installation, use the bundled version instead.",
     "owner": "kernastra",
     "category": "General",
     "versions": [
