@@ -1,0 +1,21 @@
+[
+  {
+    "guid": "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a60",
+    "name": "TMDB Trailers (Bundled yt-dlp) - Standalone",
+    "description": "Downloads movie trailers from TMDB with true standalone yt-dlp binaries - no Python required",
+    "overview": "🎬 **TRUE STANDALONE TRAILER DOWNLOADER**\n\nThis plugin automatically downloads movie trailers from The Movie Database (TMDB) API with **TRUE STANDALONE BINARIES**.\n\n✅ **NO PYTHON REQUIRED**: True standalone executables, not Python scripts\n✅ **ZERO DEPENDENCIES**: Statically linked binaries with embedded Python\n✅ **TrueNAS READY**: Works on systems without Python 3 installed\n✅ **DOCKER COMPATIBLE**: No external tool installation needed\n✅ **AUTO-DETECTION**: Automatically selects correct binary for your platform\n\n🔧 **Features:**\n• Configurable video quality (480p/720p/1080p)\n• Automatic file organization\n• Scheduled processing\n• Custom trailer folder naming\n• Duration filtering\n• Cross-platform compatibility\n\n📦 **Perfect for:**\n• TrueNAS servers (Core/SCALE)\n• Docker containers without Python\n• Restricted environments\n• Any system where Python 3 is not available\n\n🚀 **Installation:** Just add this repository URL to Jellyfin and install - works immediately!",
+    "owner": "kernastra",
+    "category": "General",
+    "imageUrl": "",
+    "versions": [
+      {
+        "version": "2.0.4.0",
+        "changelog": "🚀 TRUE STANDALONE VERSION - NO PYTHON REQUIRED!\n\n✅ FIXED: Replaced Python scripts with true standalone executables\n✅ FIXED: 'python3': No such file or directory error\n✅ NEW: Native ELF/PE executables with embedded Python interpreter\n✅ NEW: Zero dependency installation - no Python 3 needed\n✅ IMPROVED: Statically linked binaries work on any compatible system\n\n🔧 **Technical Changes:**\n• Linux: ELF 64-bit statically linked executable (27MB)\n• Windows: PE executable (18MB)\n• macOS: Mach-O executable (32MB)\n• FreeBSD: Compatible Linux binary\n• All binaries are self-contained with no external dependencies\n\n📦 Package size: ~56MB (true standalone executables)\n🎬 Fixes Python dependency issues completely!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.4-standalone/TMDBintros-bundled-standalone.zip",
+        "checksum": "9c47c9b3e1abdbccc766c34ee7aa0a8e",
+        "timestamp": "2025-08-04T05:02:00Z"
+      }
+    ]
+  }
+]

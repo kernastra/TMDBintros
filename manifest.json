@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "2.0.4.0",
+        "changelog": "🚀 TRUE STANDALONE VERSION - NO PYTHON REQUIRED!\n\n✅ FIXED: Replaced Python scripts with true standalone executables\n✅ FIXED: 'python3': No such file or directory error\n✅ NEW: Native ELF/PE executables with embedded Python interpreter\n✅ NEW: Zero dependency installation - no Python 3 needed\n✅ IMPROVED: Statically linked binaries work on any compatible system\n\n🔧 **Technical Changes:**\n• Linux: ELF 64-bit statically linked executable (27MB)\n• Windows: PE executable (18MB)\n• macOS: Mach-O executable (32MB)\n• FreeBSD: Compatible Linux binary\n• All binaries are self-contained with no external dependencies\n\n📦 Package size: ~56MB (true standalone executables)\n🎬 Fixes Python dependency issues completely!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.4-standalone/TMDBintros-bundled-standalone.zip",
+        "checksum": "9c47c9b3e1abdbccc766c34ee7aa0a8e",
+        "timestamp": "2025-08-04T05:02:00Z"
+      },
+      {
         "version": "2.0.2.0",
         "changelog": "🔧 BINARY EXECUTION FIX\n\n✅ FIXED: Exit code 127 error - enhanced chmod with multiple strategies\n✅ FIXED: Binary permission issues on TrueNAS and Docker\n✅ IMPROVED: Enhanced diagnostic logging for binary execution failures\n✅ NEW: File permission verification and reporting\n✅ NEW: Binary architecture analysis with 'file' command\n✅ NEW: Specific error guidance for common exit codes\n\n🛠️ **Technical Improvements:**\n• Multiple chmod approaches: 755, +x, u+x\n• Async method support for better performance\n• Detailed STDOUT/STDERR capture\n• File permission diagnostics (ls -la output)\n• Architecture mismatch detection\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Specifically fixes 'yt-dlp binary test failed: exit code: 127' error!",
         "targetAbi": "10.8.13.0",
