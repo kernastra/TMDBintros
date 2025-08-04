@@ -1,149 +1,157 @@
-# TMDB Trailers Plugin for Jellyfin
+# 🎬 TMDB Trailers Plugin for Jellyfin
 
-A Jellyfin plugin that automatically downloads movie trailers from The Movie Database (TMDB) API and organizes them alongside your movie files.
+[![Release](https://img.shields.io/github/v/release/kernastra/TMDBintros)](https://github.com/kernastra/TMDBintros/releases)
+[![License](https://img.shields.io/github/license/kernastra/TMDBintros)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/kernastra/TMDBintros)](https://github.com/kernastra/TMDBintros/issues)
 
-## Features
+A powerful Jellyfin plugin that automatically downloads movie trailers from The Movie Database (TMDB) API and organizes them alongside your movie files. **Now available with zero external dependencies!**
 
-- **Automatic Trailer Discovery**: Searches TMDB for trailers matching your movie library
-- **Quality Selection**: Choose preferred video quality (480p, 720p, 1080p)
-- **Smart Organization**: Organizes trailers in configurable folder structures
-- **Duration Filtering**: Set maximum trailer length to avoid long videos
-- **Scheduled Processing**: Automatically processes new movies at configurable intervals
-- **Overwrite Control**: Choose whether to replace existing trailers
-- **Detailed Logging**: Optional verbose logging for troubleshooting
+## 🚀 **NEW: Bundled Version Available!**
 
-## Prerequisites
+**No more yt-dlp installation hassles!** Choose the version that works best for you:
 
-### System Requirements
+| Version | Best For | Dependencies | Installation |
+|---------|----------|--------------|--------------|
+| **🎯 Bundled** | TrueNAS, Docker, Easy Setup | ✅ **None** | Repository or ZIP |
+| 📦 Standard | Advanced Users | yt-dlp required | Build from source |
 
+---
+
+## ✨ Features
+
+- 🎬 **Automatic Trailer Discovery**: Searches TMDB for trailers matching your movie library
+- 🎯 **Quality Selection**: Choose preferred video quality (480p, 720p, 1080p)
+- 📁 **Smart Organization**: Organizes trailers in configurable folder structures
+- ⏱️ **Duration Filtering**: Set maximum trailer length to avoid long videos
+- 📅 **Scheduled Processing**: Automatically processes new movies at configurable intervals
+- 🔄 **Overwrite Control**: Choose whether to replace existing trailers
+- 📊 **Detailed Logging**: Optional verbose logging for troubleshooting
+- 🌍 **Cross-Platform**: Linux, FreeBSD, macOS, Windows support
+- 🐳 **Container Ready**: Perfect for Docker and TrueNAS deployments
+
+---
+
+## 📦 Installation Options
+
+### 🎯 **Option 1: Bundled Version (Recommended)**
+
+**Perfect for TrueNAS, Docker, and hassle-free installation!**
+
+#### **🔗 Repository Installation (Easiest)**
+1. **Add Repository to Jellyfin**:
+   - Go to **Dashboard** → **Plugins** → **Repositories**
+   - Click **Add Repository**
+   - **Repository URL**: 
+     ```
+     https://raw.githubusercontent.com/kernastra/TMDBintros/main/repository-manifest.json
+     ```
+   - **Repository Name**: `TMDB Trailers Bundled`
+
+2. **Install Plugin**:
+   - Go to **Plugins** → **Catalog**
+   - Find **"TMDB Trailers (Bundled yt-dlp)"**
+   - Click **Install**
+   - **Restart Jellyfin**
+
+3. **Configure**: Add your TMDB API key and enjoy!
+
+#### **📥 Manual ZIP Installation**
+1. **Download**: [TMDBintros-bundled.zip](https://github.com/kernastra/TMDBintros/releases/download/v2.0.0-bundled/TMDBintros-bundled.zip) (~56MB)
+2. **Upload**: Dashboard → Plugins → Upload Plugin
+3. **Restart**: Restart Jellyfin
+4. **Configure**: Add your TMDB API key
+
+📖 **Detailed Guide**: [EASY_INSTALL_GUIDE.md](EASY_INSTALL_GUIDE.md)
+
+---
+
+### 📦 **Option 2: Standard Version**
+
+**For advanced users who prefer managing dependencies:**
+
+#### **🛠️ Prerequisites**
 - Jellyfin 10.8.13 or later
 - .NET 8.0 runtime
-- **yt-dlp** (for downloading YouTube videos)
+- **yt-dlp** (must be installed separately)
 
-### Installing yt-dlp
+#### **Installing yt-dlp**
 
-The plugin requires `yt-dlp` to download videos from YouTube. Install it using one of these methods:
-
-#### Ubuntu/Debian:
 ```bash
-sudo apt update
-sudo apt install yt-dlp
-```
+# Ubuntu/Debian
+sudo apt update && sudo apt install yt-dlp
 
-#### CentOS/RHEL/Fedora:
-```bash
-# Using pip
-pip install yt-dlp
-
-# Or using package manager (Fedora)
+# CentOS/RHEL/Fedora
 sudo dnf install yt-dlp
-```
+# or: pip install yt-dlp
 
-#### Windows:
-```bash
-# Using winget
+# Windows
 winget install yt-dlp
+# or: pip install yt-dlp
 
-# Or using pip
-pip install yt-dlp
-```
-
-#### macOS:
-```bash
-# Using Homebrew
+# macOS
 brew install yt-dlp
-
-# Or using pip
-pip install yt-dlp
+# or: pip install yt-dlp
 ```
 
-### TMDB API Key
-
-1. Create a free account at [The Movie Database](https://www.themoviedb.org/)
-2. Go to [API Settings](https://www.themoviedb.org/settings/api)
-3. Request an API key
-4. Copy your API key for use in the plugin configuration
-
-## Installation
-
-### Option 1: Local Installation (Clone & Build)
-
-Perfect for testing, development, or using the latest features:
-
-1. **Quick Installation** (automated):
+#### **🔧 Build from Source**
+1. **Clone & Build**:
    ```bash
    git clone https://github.com/kernastra/TMDBintros.git
    cd TMDBintros
-   ./local-install.sh
-   ```
-
-2. **Manual Installation** (step-by-step):
-   - See [LOCAL_INSTALLATION.md](LOCAL_INSTALLATION.md) for detailed instructions
-   - Includes troubleshooting and development setup
-
-### Option 2: Manual Installation
-
-1. Download the latest release DLL from the [Releases](https://github.com/kernastra/TMDBintros/releases) page
-2. Copy the DLL to your Jellyfin plugins directory (see paths above)
-3. Restart Jellyfin
-
-### Option 3: Build from Source
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/kernastra/TMDBintros.git
-   cd TMDBintros
-   ```
-
-2. Build the plugin:
-   ```bash
    dotnet build --configuration Release
    ```
 
-3. Copy the built DLL to your Jellyfin plugins directory:
+2. **Install DLL**:
    ```bash
    # Linux
    cp bin/Release/net8.0/TMDBintros.dll /var/lib/jellyfin/plugins/
-
+   
    # Windows
    copy bin\Release\net8.0\TMDBintros.dll "C:\ProgramData\Jellyfin\Server\plugins\"
-
+   
    # Docker
    cp bin/Release/net8.0/TMDBintros.dll /path/to/jellyfin/config/plugins/
    ```
 
-### Option 2: Manual Plugin Installation
+---
 
-1. Download the latest release DLL from the [Releases](https://github.com/kernastra/TMDBintros/releases) page
-2. Copy the DLL to your Jellyfin plugins directory (see paths above)
-3. Restart Jellyfin
+## 🔑 TMDB API Key Setup
 
-## Configuration
+**Required for both versions:**
 
-1. Restart Jellyfin after installing the plugin
+1. Create account at [The Movie Database](https://www.themoviedb.org/)
+2. Go to [API Settings](https://www.themoviedb.org/settings/api)
+3. Request an API key (free)
+4. Copy your API key for plugin configuration
+
+---
+
+## ⚙️ Configuration
+
+1. **Restart Jellyfin** after installing the plugin
 2. Go to **Dashboard** → **Plugins** → **TMDB Trailers**
-3. Configure the following settings:
+3. Configure your settings:
 
-### Required Settings
+### 🔑 Required Settings
+- **TMDB API Key**: Your API key from TMDB *(required)*
 
-- **TMDB API Key**: Your API key from TMDB (required)
+### 🎛️ Optional Settings
+| Setting | Options | Default | Description |
+|---------|---------|---------|-------------|
+| **Auto Download** | On/Off | ✅ On | Automatically download trailers for new movies |
+| **Video Quality** | 480p/720p/1080p | 720p | Preferred download quality |
+| **Max Duration** | 1-10 minutes | 5 min | Maximum trailer length |
+| **Overwrite** | Yes/No | No | Replace existing trailers |
+| **Trailer Folder** | Custom name | "trailers" | Subfolder name for trailers |
+| **Subfolders** | Yes/No | Yes | Create movie-specific folders |
+| **Process Interval** | 1-168 hours | 24 hours | Auto-check frequency |
+| **Detailed Logging** | On/Off | Off | Verbose logging for debugging |
 
-### Optional Settings
+---
 
-- **Enable Automatic Download**: Automatically download trailers for new movies (default: enabled)
-- **Preferred Video Quality**: 480p, 720p, or 1080p (default: 720p)
-- **Maximum Trailer Duration**: Maximum length in minutes (default: 5 minutes)
-- **Overwrite Existing Trailers**: Replace existing trailer files (default: disabled)
-- **Trailer Folder Name**: Name of subfolder for trailers (default: "trailers")
-- **Organize in Subfolders**: Create movie-specific subfolders (default: enabled)
-- **Processing Interval**: How often to check for new movies in hours (default: 24 hours)
-- **Enable Detailed Logging**: Verbose logging for debugging (default: disabled)
+## 📁 File Organization
 
-## File Organization
-
-The plugin organizes trailers based on your configuration:
-
-### With Subfolders (default):
+### 📂 With Subfolders (Default):
 ```
 /Movies/
 ├── Movie Name (2023)/
@@ -153,7 +161,7 @@ The plugin organizes trailers based on your configuration:
 │           └── Movie Name (2023) - Official Trailer.mp4
 ```
 
-### Without Subfolders:
+### 📂 Without Subfolders:
 ```
 /Movies/
 ├── Movie Name (2023)/
@@ -161,6 +169,157 @@ The plugin organizes trailers based on your configuration:
 │   └── trailers/
 │       └── Movie Name (2023) - Official Trailer.mp4
 ```
+
+---
+
+## 🎯 Manual Processing
+
+Trigger trailer downloads manually:
+
+1. **Dashboard** → **Scheduled Tasks**
+2. Find **"Download Movie Trailers"**
+3. Click **▶️ Run Now**
+
+---
+
+## 🛠️ Troubleshooting
+
+### 🔧 Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| **"yt-dlp not available"** | Use bundled version OR install yt-dlp manually |
+| **"TMDB API key not configured"** | Add valid API key in plugin settings |
+| **No trailers found** | Check movie exists on TMDB, enable detailed logging |
+| **Download failures** | Check internet, verify yt-dlp: `yt-dlp --version` |
+| **Permission errors** | Bundled version handles this automatically |
+
+### 📊 Logs Location
+- **Linux**: `/var/log/jellyfin/`
+- **Windows**: `C:\ProgramData\Jellyfin\Server\logs`
+- **Docker**: Container logs
+
+**💡 Tip**: Enable "Detailed Logging" in plugin settings for troubleshooting.
+
+---
+
+## 📚 Documentation
+
+### 📖 **User Guides**
+- **[📥 Easy Install Guide](EASY_INSTALL_GUIDE.md)** - Step-by-step installation with screenshots
+- **[🔧 Bundled Version README](BUNDLED_VERSION_README.md)** - Technical details about the bundled version
+
+### 👩‍💻 **Developer Resources**
+- **[🚀 Plugin Development Guide](JELLYFIN_PLUGIN_DEVELOPMENT_GUIDE.md)** - Complete Jellyfin plugin development tutorial
+- **[⚡ Quick Start Template](QUICK_START_TEMPLATE.md)** - Minimal template for new plugins
+- **[📋 Plugin Submission Guide](PLUGIN_SUBMISSION.md)** - How to submit to official Jellyfin repository
+
+### 🏗️ **Project Files**
+- **[🔨 Build Scripts](download-yt-dlp.sh)** - Automated binary download script
+- **[📦 Installation Script](install-bundled.sh)** - Automated installation helper
+
+---
+
+## 🌟 Perfect For
+
+### 🏠 **Home Users**
+- ✅ TrueNAS Core/SCALE servers
+- ✅ Unraid systems
+- ✅ Raspberry Pi setups
+- ✅ Docker deployments
+
+### 🏢 **Professional**
+- ✅ Corporate networks
+- ✅ Air-gapped systems
+- ✅ Compliance environments
+- ✅ Managed containers
+
+### 🎮 **Media Enthusiasts**
+- ✅ Large movie collections
+- ✅ Automated workflows
+- ✅ Quality-focused setups
+- ✅ Set-and-forget operation
+
+---
+
+## 🔧 Development
+
+### Building
+```bash
+git clone https://github.com/kernastra/TMDBintros.git
+cd TMDBintros
+dotnet restore
+dotnet build --configuration Release
+```
+
+### Testing
+```bash
+dotnet test
+```
+
+### Contributing
+1. 🍴 Fork the repository
+2. 🌿 Create a feature branch
+3. ✏️ Make your changes
+4. 🧪 Add tests if applicable
+5. 📤 Submit a pull request
+
+---
+
+## 📈 Version History
+
+| Version | Release | Highlights |
+|---------|---------|------------|
+| **v2.0.0** | 🎯 Latest | **Bundled yt-dlp**, zero dependencies, TrueNAS ready |
+| v1.0.2 | 🔧 Stable | Configuration fixes, improved UI |
+| v1.0.1 | 📦 Initial | Core functionality, manual yt-dlp required |
+
+---
+
+## 🤝 Support
+
+### 💬 Getting Help
+1. 📖 Check [troubleshooting section](#🛠️-troubleshooting)
+2. 🔍 Search [GitHub Issues](https://github.com/kernastra/TMDBintros/issues)
+3. 🆕 Create new issue with:
+   - Jellyfin version
+   - Plugin version  
+   - Operating system
+   - Log entries
+   - Reproduction steps
+
+### 🔗 Quick Links
+- **[📥 Releases](https://github.com/kernastra/TMDBintros/releases)** - Download latest versions
+- **[🐛 Issues](https://github.com/kernastra/TMDBintros/issues)** - Report bugs or request features
+- **[📊 TMDB API](https://www.themoviedb.org/settings/api)** - Get your free API key
+
+---
+
+## 🙏 Acknowledgments
+
+- **[🎬 The Movie Database (TMDB)](https://www.themoviedb.org/)** - Trailer metadata API
+- **[📹 yt-dlp](https://github.com/yt-dlp/yt-dlp)** - Video downloading engine
+- **[🖥️ Jellyfin](https://jellyfin.org/)** - Open-source media server platform
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🚀 Ready to Get Started?
+
+### 🎯 **Recommended Quick Start**:
+1. **Copy repository URL**: `https://raw.githubusercontent.com/kernastra/TMDBintros/main/repository-manifest.json`
+2. **Add to Jellyfin**: Dashboard → Plugins → Repositories → Add Repository
+3. **Install plugin**: Plugins → Catalog → "TMDB Trailers (Bundled yt-dlp)" → Install
+4. **Get API key**: [TMDB API Settings](https://www.themoviedb.org/settings/api)
+5. **Configure**: Dashboard → Plugins → TMDB Trailers → Add API key
+6. **Enjoy**: Automatic trailers for your entire movie library! 🍿
+
+**🎬 Transform your movie library with cinematic trailers - zero setup required!**
 
 ## Manual Processing
 
