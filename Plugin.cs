@@ -30,7 +30,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public override string Name => "TMDB Trailers";
 
     /// <inheritdoc />
-    public override Guid Id => Guid.Parse("eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5f");
+    public override Guid Id => Guid.Parse("eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a60");
 
     /// <summary>
     /// Gets the current plugin instance.

@@ -89,7 +89,7 @@ public class VideoDownloadService
             _logger.LogDebug("Starting download of YouTube video: {VideoKey} to {OutputPath}", videoKey, outputPath);
 
             // Get the correct yt-dlp binary path
-            var ytDlpPath = GetYtDlpPath() ?? "yt-dlp";
+            var ytDlpPath = await GetYtDlpPath() ?? "yt-dlp";
 
             var processInfo = new ProcessStartInfo
             {
@@ -154,7 +154,7 @@ public class VideoDownloadService
     /// Gets the path to the bundled yt-dlp binary for the current platform.
     /// </summary>
     /// <returns>Path to yt-dlp binary or null if not found.</returns>
-    private string? GetYtDlpPath()
+    private async Task<string?> GetYtDlpPath()
     {
         try
         {
@@ -162,12 +162,84 @@ public class VideoDownloadService
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;
             var pluginDirectory = Path.GetDirectoryName(assemblyLocation);
             
+            _logger.LogInformation("Assembly location: {AssemblyLocation}", assemblyLocation);
+            _logger.LogInformation("Plugin directory: {PluginDirectory}", pluginDirectory);
+            
             if (string.IsNullOrEmpty(pluginDirectory))
             {
+                _logger.LogError("Plugin directory is null or empty");
                 return null;
             }
 
-            var binariesPath = Path.Combine(pluginDirectory, "Resources", "binaries");
+            // Try multiple possible locations for the Resources directory
+            var possibleResourcesPaths = new[]
+            {
+                Path.Combine(pluginDirectory, "Resources"),
+                Path.Combine(pluginDirectory, "..", "Resources"),
+                Path.Combine(pluginDirectory, "..", "..", "Resources")
+            };
+
+            string? resourcesPath = null;
+            foreach (var possiblePath in possibleResourcesPaths)
+            {
+                var normalizedPath = Path.GetFullPath(possiblePath);
+                _logger.LogInformation("Checking for Resources directory at: {ResourcesPath}", normalizedPath);
+                
+                if (Directory.Exists(normalizedPath))
+                {
+                    resourcesPath = normalizedPath;
+                    _logger.LogInformation("Found Resources directory at: {ResourcesPath}", resourcesPath);
+                    break;
+                }
+            }
+
+            if (resourcesPath == null)
+            {
+                _logger.LogWarning("Resources directory not found in any expected location");
+                
+                // List all files/directories in the plugin directory for debugging
+                try
+                {
+                    var pluginContents = Directory.GetFileSystemEntries(pluginDirectory);
+                    _logger.LogInformation("Plugin directory contents: {Contents}", string.Join(", ", pluginContents.Select(Path.GetFileName)));
+                    
+                    // Also check parent directory
+                    var parentDirectory = Path.GetDirectoryName(pluginDirectory);
+                    if (!string.IsNullOrEmpty(parentDirectory))
+                    {
+                        var parentContents = Directory.GetFileSystemEntries(parentDirectory);
+                        _logger.LogInformation("Parent directory ({ParentDir}) contents: {Contents}", 
+                            parentDirectory, string.Join(", ", parentContents.Select(Path.GetFileName)));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to list directory contents");
+                }
+                
+                return null;
+            }
+
+            var binariesPath = Path.Combine(resourcesPath, "binaries");
+            _logger.LogInformation("Looking for binaries at: {BinariesPath}", binariesPath);
+            
+            if (!Directory.Exists(binariesPath))
+            {
+                _logger.LogWarning("Binaries directory does not exist: {BinariesPath}", binariesPath);
+                
+                // List contents of Resources directory
+                try
+                {
+                    var resourceContents = Directory.GetFileSystemEntries(resourcesPath);
+                    _logger.LogInformation("Resources directory contents: {Contents}", string.Join(", ", resourceContents.Select(Path.GetFileName)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to list Resources directory contents");
+                }
+                
+                return null;
+            }
             
             // Determine the correct binary based on the platform
             string binaryName;
@@ -188,37 +260,118 @@ public class VideoDownloadService
                 binaryName = "yt-dlp-linux-x64";
             }
 
+            _logger.LogInformation("Platform detected, looking for binary: {BinaryName}", binaryName);
+            
             var ytDlpPath = Path.Combine(binariesPath, binaryName);
             
             if (File.Exists(ytDlpPath))
             {
+                // Get file info for diagnostics
+                var fileInfo = new FileInfo(ytDlpPath);
+                _logger.LogInformation("Found binary file: {YtDlpPath}, Size: {Size} bytes", ytDlpPath, fileInfo.Length);
+                
                 // Ensure the binary is executable on Unix systems
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     try
                     {
-                        var chmodProcess = new ProcessStartInfo
+                        // Try multiple approaches to make the file executable
+                        var chmodCommands = new[]
                         {
-                            FileName = "chmod",
-                            Arguments = $"+x \"{ytDlpPath}\"",
-                            UseShellExecute = false,
-                            CreateNoWindow = true
+                            $"chmod 755 \"{ytDlpPath}\"",
+                            $"chmod +x \"{ytDlpPath}\"",
+                            $"chmod u+x \"{ytDlpPath}\""
                         };
-                        using var process = Process.Start(chmodProcess);
-                        process?.WaitForExit();
+
+                        foreach (var chmodCmd in chmodCommands)
+                        {
+                            try
+                            {
+                                var cmdParts = chmodCmd.Split(' ', 2);
+                                var chmodProcess = new ProcessStartInfo
+                                {
+                                    FileName = cmdParts[0],
+                                    Arguments = cmdParts[1],
+                                    UseShellExecute = false,
+                                    CreateNoWindow = true,
+                                    RedirectStandardOutput = true,
+                                    RedirectStandardError = true
+                                };
+                                
+                                using var process = Process.Start(chmodProcess);
+                                if (process != null)
+                                {
+                                    await process.WaitForExitAsync();
+                                    if (process.ExitCode == 0)
+                                    {
+                                        _logger.LogInformation("Successfully made binary executable with: {Command}", chmodCmd);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        var stderr = await process.StandardError.ReadToEndAsync();
+                                        _logger.LogWarning("chmod failed with exit code {ExitCode}: {Error}", process.ExitCode, stderr);
+                                    }
+                                }
+                            }
+                            catch (Exception chmodEx)
+                            {
+                                _logger.LogWarning(chmodEx, "Failed to execute chmod command: {Command}", chmodCmd);
+                            }
+                        }
+                        
+                        // Check file permissions after chmod attempts
+                        try
+                        {
+                            var statProcess = new ProcessStartInfo
+                            {
+                                FileName = "ls",
+                                Arguments = $"-la \"{ytDlpPath}\"",
+                                UseShellExecute = false,
+                                CreateNoWindow = true,
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true
+                            };
+                            
+                            using var process = Process.Start(statProcess);
+                            if (process != null)
+                            {
+                                await process.WaitForExitAsync();
+                                var output = await process.StandardOutput.ReadToEndAsync();
+                                _logger.LogInformation("File permissions: {Permissions}", output.Trim());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to check file permissions");
+                        }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        // Ignore chmod errors - binary might already be executable
+                        _logger.LogError(ex, "Failed to make binary executable: {YtDlpPath}", ytDlpPath);
                     }
                 }
                 
-                _logger.LogDebug("Found bundled yt-dlp at: {YtDlpPath}", ytDlpPath);
+                _logger.LogInformation("Found bundled yt-dlp at: {YtDlpPath}", ytDlpPath);
                 return ytDlpPath;
             }
-            
-            _logger.LogWarning("Bundled yt-dlp binary not found at: {YtDlpPath}", ytDlpPath);
-            return null;
+            else
+            {
+                _logger.LogWarning("Bundled yt-dlp binary not found at: {YtDlpPath}", ytDlpPath);
+                
+                // List all files in the binaries directory for debugging
+                try
+                {
+                    var binaryFiles = Directory.GetFiles(binariesPath);
+                    _logger.LogInformation("Available binary files: {Files}", string.Join(", ", binaryFiles.Select(Path.GetFileName)));
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to list binary files");
+                }
+                
+                return null;
+            }
         }
         catch (Exception ex)
         {
@@ -234,7 +387,7 @@ public class VideoDownloadService
     private async Task<bool> IsYtDlpAvailableAsync()
     {
         // First try to get the bundled version
-        var ytDlpPath = GetYtDlpPath();
+        var ytDlpPath = await GetYtDlpPath();
         if (!string.IsNullOrEmpty(ytDlpPath))
         {
             return await TestYtDlpBinary(ytDlpPath);
@@ -271,11 +424,72 @@ public class VideoDownloadService
             var success = process.ExitCode == 0;
             if (success)
             {
-                _logger.LogDebug("yt-dlp binary is working: {BinaryPath}", binaryPath);
+                var output = await process.StandardOutput.ReadToEndAsync();
+                _logger.LogInformation("yt-dlp binary is working: {BinaryPath}, version: {Version}", binaryPath, output.Trim());
             }
             else
             {
-                _logger.LogWarning("yt-dlp binary test failed: {BinaryPath}, exit code: {ExitCode}", binaryPath, process.ExitCode);
+                var stdout = await process.StandardOutput.ReadToEndAsync();
+                var stderr = await process.StandardError.ReadToEndAsync();
+                
+                _logger.LogWarning("yt-dlp binary test failed: \"{BinaryPath}\", exit code: {ExitCode}", binaryPath, process.ExitCode);
+                
+                if (!string.IsNullOrEmpty(stdout))
+                {
+                    _logger.LogWarning("STDOUT: {Output}", stdout);
+                }
+                
+                if (!string.IsNullOrEmpty(stderr))
+                {
+                    _logger.LogWarning("STDERR: {Error}", stderr);
+                }
+                
+                // Provide specific guidance for common exit codes
+                switch (process.ExitCode)
+                {
+                    case 127:
+                        _logger.LogError("Exit code 127: Binary not found or not executable. This usually means:");
+                        _logger.LogError("  1. The binary file permissions are incorrect");
+                        _logger.LogError("  2. Missing shared library dependencies");
+                        _logger.LogError("  3. Architecture mismatch (wrong binary for this system)");
+                        
+                        // Try to get more info about the binary
+                        try
+                        {
+                            var fileCmd = new ProcessStartInfo
+                            {
+                                FileName = "file",
+                                Arguments = $"\"{binaryPath}\"",
+                                RedirectStandardOutput = true,
+                                RedirectStandardError = true,
+                                UseShellExecute = false,
+                                CreateNoWindow = true
+                            };
+                            
+                            using var fileProcess = new Process { StartInfo = fileCmd };
+                            fileProcess.Start();
+                            await fileProcess.WaitForExitAsync();
+                            
+                            if (fileProcess.ExitCode == 0)
+                            {
+                                var fileOutput = await fileProcess.StandardOutput.ReadToEndAsync();
+                                _logger.LogError("Binary file info: {FileInfo}", fileOutput.Trim());
+                            }
+                        }
+                        catch (Exception fileEx)
+                        {
+                            _logger.LogWarning(fileEx, "Could not get file information for binary");
+                        }
+                        break;
+                        
+                    case 126:
+                        _logger.LogError("Exit code 126: Binary found but not executable (permission denied)");
+                        break;
+                        
+                    default:
+                        _logger.LogError("Unexpected exit code {ExitCode} when testing yt-dlp binary", process.ExitCode);
+                        break;
+                }
             }
             
             return success;

@@ -1,4 +1,4 @@
-guid: "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a5f"
+guid: "eb5212ba-b5e0-4aa4-a00c-9ab0cb4d1a60"
 name: "TMDB Trailers"
 description: "Downloads movie trailers from TMDB for your media library"
 overview: "This plugin automatically searches for and downloads movie trailers from The Movie Database (TMDB) API, organizing them alongside your movie files for enhanced viewing experience."
