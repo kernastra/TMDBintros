@@ -4,9 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <AssemblyTitle>TMDB Trailers Plugin</AssemblyTitle>
     <AssemblyDescription>A Jellyfin plugin that downloads movie trailers from TMDB</AssemblyDescription>
-    <AssemblyVersion>2.0.8.0</AssemblyVersion>
-    <FileVersion>2.0.8.0</FileVersion>
-    <Version>2.0.8</Version>
+    <AssemblyVersion>2.0.9.0</AssemblyVersion>
+    <FileVersion>2.0.9.0</FileVersion>
+    <Version>2.0.9</Version>
     <AssemblyCompany>YourName</AssemblyCompany>
     <Product>Jellyfin Plugin</Product>
     <Copyright>Copyright © YourName 2024</Copyright>

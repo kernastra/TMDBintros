@@ -38,15 +38,20 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
     public static Plugin? Instance { get; private set; }
 
     /// <inheritdoc />
+    public override string Description => "Downloads movie trailers from TMDB with bundled yt-dlp";
+
+    /// <inheritdoc />
     public IEnumerable<PluginPageInfo> GetPages()
     {
-        return new[]
+        var pages = new[]
         {
             new PluginPageInfo
             {
-                Name = this.Name,
-                EmbeddedResourcePath = string.Format(CultureInfo.InvariantCulture, "{0}.Configuration.configPage.html", GetType().Namespace)
+                Name = "TMDB Trailers",
+                EmbeddedResourcePath = "TMDBintros.Configuration.configPage.html"
             }
         };
+        
+        return pages;
     }
 }

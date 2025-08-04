@@ -8,6 +8,14 @@
     "category": "General",
     "versions": [
       {
+        "version": "2.0.9.0",
+        "changelog": "🔧 SETTINGS PAGE FIX v2!\n\n✅ FIXED: Plugin settings page registration - hardcoded resource path\n✅ FIXED: \"No settings\" error with explicit configuration page setup\n✅ IMPROVED: Simplified page name for better recognition\n✅ ENHANCED: Added Description property for better plugin identification\n✅ VERIFIED: Configuration page properly embedded and accessible\n\n🛠️ **Technical Improvements:**\n• Explicit EmbeddedResourcePath: \"TMDBintros.Configuration.configPage.html\"\n• Simplified GetPages() implementation for better compatibility\n• Added Description override for plugin identification\n• Direct page name specification\n\n📦 Package size: ~15MB (yt-dlp Python scripts + settings fix)\n🎬 Definitive fix for settings page access issues!",
+        "targetAbi": "10.8.13.0",
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.9/TMDBintros-settings-fix-v2.0.9.zip",
+        "checksum": "75c18fe60625bf81d3d57eb01548fed9",
+        "timestamp": "2025-08-04T17:00:00Z"
+      },
+      {
         "version": "2.0.8.0",
         "changelog": "🔧 CONFIGURATION PAGE FIX!\n\n✅ FIXED: \"No settings\" error - configuration page now loads properly\n✅ FIXED: 'sh: 1: update: not found' error in Python installation\n✅ IMPROVED: Use bash instead of sh for better command compatibility\n✅ ENHANCED: More detailed logging for installation attempts\n✅ ADDED: Docker-specific guidance for permission issues\n✅ IMPROVED: Better error messages and troubleshooting guidance\n✅ FIXED: Container permission detection and handling\n\n🛠️ **Technical Improvements:**\n• Fixed configuration page loading issues\n• Fixed command parsing issues causing installation failures\n• Enhanced error detection for permission problems\n• Better guidance for Docker container limitations\n• Improved diagnostic logging for troubleshooting\n\n📦 Package size: ~15MB (yt-dlp Python scripts + improved auto-installer)\n🎬 Resolves configuration and Python installation issues!",
         "targetAbi": "10.8.13.0",
