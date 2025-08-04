@@ -9,12 +9,12 @@
     "imageUrl": "",
     "versions": [
       {
-        "version": "2.0.1.0",
-        "changelog": "🚀 ENHANCED BUNDLED VERSION\n\n✅ FIXED: Improved plugin directory detection for TrueNAS and Docker\n✅ FIXED: Multi-path search for Resources directory\n✅ IMPROVED: Enhanced diagnostic logging for troubleshooting\n✅ IMPROVED: Better error handling for different Jellyfin setups\n✅ CONFIRMED: Works with TrueNAS Core/SCALE plugin structure\n\n🔧 **Technical Improvements:**\n• Checks multiple possible paths for bundled binaries\n• Enhanced logging shows exactly where plugin looks for files\n• Robust path resolution for various Jellyfin installations\n• Better parent directory detection\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Resolves 'yt-dlp not available' errors from v2.0.0!",
+        "version": "2.0.2.0",
+        "changelog": "� BINARY EXECUTION FIX\n\n✅ FIXED: Exit code 127 error - enhanced chmod with multiple strategies\n✅ FIXED: Binary permission issues on TrueNAS and Docker\n✅ IMPROVED: Enhanced diagnostic logging for binary execution failures\n✅ NEW: File permission verification and reporting\n✅ NEW: Binary architecture analysis with 'file' command\n✅ NEW: Specific error guidance for common exit codes\n\n�️ **Technical Improvements:**\n• Multiple chmod approaches: 755, +x, u+x\n• Async method support for better performance\n• Detailed STDOUT/STDERR capture\n• File permission diagnostics (ls -la output)\n• Architecture mismatch detection\n\n📦 Package size: ~56MB (includes all platform binaries)\n🎬 Specifically fixes 'yt-dlp binary test failed: exit code: 127' error!",
         "targetAbi": "10.8.13.0",
-        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.1-bundled-enhanced/TMDBintros-bundled-enhanced.zip",
-        "checksum": "20c61ba737ef75aed07aff429a406cf1",
-        "timestamp": "2025-08-03T23:41:00Z"
+        "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.2-bundled-fixed/TMDBintros-bundled-v2.0.2.zip",
+        "checksum": "cc899d640ecb93a87785b3c9f3756f5b",
+        "timestamp": "2025-08-04T04:02:00Z"
       }
     ]
   }
