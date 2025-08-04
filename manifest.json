@@ -20,7 +20,7 @@
         "changelog": "🐍 AUTOMATIC PYTHON INSTALLATION!\n\n✅ NEW: Automatic Python 3 detection and installation\n✅ NEW: Multi-package manager support (apt-get, apk, dnf, yum, pkg, pacman)\n✅ NEW: Smart container environment detection\n✅ FIXED: Python dependency errors resolved automatically\n✅ IMPROVED: Zero-touch installation for Docker/TrueNAS environments\n\n🔧 **Technical Features:**\n• Detects missing Python 3 and installs automatically\n• Supports Debian/Ubuntu (apt-get), Alpine (apk), CentOS/RHEL (dnf/yum)\n• FreeBSD (pkg) support for TrueNAS Core\n• Arch Linux (pacman) compatibility\n• Comprehensive error handling and logging\n• Installation verification with version checking\n\n📦 Package size: ~15MB (yt-dlp Python scripts + auto-installer)\n🎬 Completely automated Python dependency resolution!",
         "targetAbi": "10.8.13.0",
         "sourceUrl": "https://github.com/kernastra/TMDBintros/releases/download/v2.0.5/TMDBintros-auto-python.zip",
-        "checksum": "TBD",
+        "checksum": "7574255a5ff0bd77c333d29f71666ac9",
         "timestamp": "2024-12-19T18:00:00Z"
       },
       {
