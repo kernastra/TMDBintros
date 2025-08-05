@@ -199,3 +199,43 @@ disk: ## Show disk usage of Docker resources
 	@echo ""
 	@echo "Local directory usage:"
 	du -sh . logs cache 2>/dev/null || true
+
+# Create GitHub release
+github-release: ## Create GitHub release for v3.0.0
+	@echo "Creating GitHub release for v3.0.0..."
+	@if ! git tag --list | grep -q "v3.0.0"; then \
+		echo "Error: v3.0.0 tag not found. Please create the tag first."; \
+		exit 1; \
+	fi
+	@if [ ! -f RELEASE_NOTES_v3.0.0.md ]; then \
+		echo "Error: RELEASE_NOTES_v3.0.0.md not found."; \
+		exit 1; \
+	fi
+	@if [ ! -f backups/tmdb-trailer-downloader-v3.0.0.tar.gz ]; then \
+		echo "Creating release archive..."; \
+		make release; \
+	fi
+	@echo "Creating GitHub release..."
+	gh release create v3.0.0 \
+		--title "🚀 TMDB Trailer Downloader v3.0.0 - Complete Container Transformation" \
+		--notes-file RELEASE_NOTES_v3.0.0.md \
+		backups/tmdb-trailer-downloader-v3.0.0.tar.gz \
+		--latest
+	@echo "✅ GitHub release v3.0.0 created successfully!"
+	@echo "🔗 View at: https://github.com/kernastra/TMDBintros/releases/tag/v3.0.0"
+
+# Push everything and create release
+deploy-release: ## Push all changes and create GitHub release
+	@echo "Deploying complete v3.0.0 release..."
+	@echo "1. Checking git status..."
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "Uncommitted changes found. Committing..."; \
+		git add .; \
+		git commit -m "🔧 Final v3.0.0 preparations"; \
+	fi
+	@echo "2. Pushing to GitHub..."
+	git push origin main
+	git push origin v3.0.0 2>/dev/null || echo "Tag already pushed"
+	@echo "3. Creating GitHub release..."
+	make github-release
+	@echo "🎉 Complete v3.0.0 deployment finished!"
