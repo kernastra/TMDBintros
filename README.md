@@ -1,4 +1,4 @@
-# TMDB Trailer Downloader v3.0.0 for Jellyfin Cinema Mode
+# TMDB Trailer Downloader v3.1.0 for Jellyfin Cinema Mode
 
 A production-ready Python application that downloads movie trailers from The Movie Database (TMDB) API and organizes them for the [Jellyfin Cinema Mode plugin](https://github.com/CherryFloors/jellyfin-plugin-cinemamode).
 

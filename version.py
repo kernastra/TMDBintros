@@ -3,14 +3,14 @@
 Version information for TMDB Trailer Downloader
 """
 
-__version__ = "3.0.0"
-__version_info__ = (3, 0, 0)
+__version__ = "3.1.0"
+__version_info__ = (3, 1, 0)
 __release_date__ = "2025-08-04"
-__release_name__ = "Enterprise Container Edition"
+__release_name__ = "Upcoming Movies Edition"
 
 # Version components
 MAJOR = 3
-MINOR = 0
+MINOR = 1
 PATCH = 0
 
 # Build information
@@ -27,6 +27,7 @@ FEATURES = {
     "network_shares": True,
     "environment_config": True,
     "enterprise_deployment": True,
+    "upcoming_movies": True,  # New in v3.1.0!
     "json_config": True,  # Legacy support
 }
 
