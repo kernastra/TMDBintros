@@ -176,6 +176,22 @@ backup: ## Backup logs and cache
 	@tar -czf backups/tmdb-backup-$(shell date +%Y%m%d-%H%M%S).tar.gz logs cache .env
 	@echo "Backup created in backups/ directory"
 
+# Create release archive
+release: ## Create release archive for distribution
+	@echo "Creating release archive..."
+	@mkdir -p backups logs cache
+	@tar -czf backups/tmdb-trailer-downloader-v3.0.0.tar.gz \
+		--exclude='.git' \
+		--exclude='backups' \
+		--exclude='logs/*' \
+		--exclude='cache/*' \
+		--exclude='.env' \
+		--exclude='*.pyc' \
+		--exclude='__pycache__' \
+		.
+	@echo "Release archive created: backups/tmdb-trailer-downloader-v3.0.0.tar.gz"
+	@echo "Archive size: $$(du -h backups/tmdb-trailer-downloader-v3.0.0.tar.gz | cut -f1)"
+
 # Show disk usage
 disk: ## Show disk usage of Docker resources
 	@echo "Docker disk usage:"
