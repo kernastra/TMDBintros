@@ -177,6 +177,54 @@ services:
       - scheduler
       - all
 
+  # Upcoming movies trailer downloader
+  tmdb-upcoming:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_DATE: ${BUILD_DATE:-}
+        VERSION: ${VERSION:-v3.0.0}
+    image: tmdb-trailer-downloader:${VERSION:-v3.0.0}
+    container_name: tmdb-upcoming
+    restart: "no"  # Run on-demand, not continuously
+    environment:
+      # TMDB Configuration
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      
+      # Path Configuration
+      - JELLYFIN_MOVIES_PATH=/movies
+      
+      # Upcoming Movies Configuration
+      - UPCOMING_ENABLED=${UPCOMING_ENABLED:-false}
+      - UPCOMING_MONTHS_AHEAD=${UPCOMING_MONTHS_AHEAD:-6}
+      - UPCOMING_MIN_POPULARITY=${UPCOMING_MIN_POPULARITY:-10.0}
+      - UPCOMING_MAX_MOVIES=${UPCOMING_MAX_MOVIES:-50}
+      - UPCOMING_CLEANUP_DAYS=${UPCOMING_CLEANUP_DAYS:-30}
+      
+      # Download Configuration
+      - DOWNLOAD_QUALITY=${DOWNLOAD_QUALITY:-best}
+      - MAX_TRAILERS_PER_MOVIE=${MAX_TRAILERS_PER_MOVIE:-3}
+      
+      # Logging
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FILE=/app/logs/tmdb-upcoming.log
+    volumes:
+      # Mount your Jellyfin movies directory
+      - ${HOST_MOVIES_PATH:-./movies}:/movies
+      # Persistent logs
+      - ./logs:/app/logs
+      # Cache directory
+      - ./cache:/app/cache
+      # Environment file
+      - ./.env:/app/.env:ro
+    command: ["python3", "tmdb_upcoming.py"]
+    networks:
+      - tmdb-network
+    profiles:
+      - upcoming
+      - all
+
   # Web dashboard with monitoring and statistics
   tmdb-dashboard:
     build: 

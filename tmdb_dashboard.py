@@ -57,6 +57,8 @@ class TMDBDashboard:
             'total_movies': self.count_movies(),
             'movies_with_trailers': self.count_movies_with_trailers(),
             'total_trailers': self.count_trailers(),
+            'upcoming_movies': self.count_upcoming_movies(),
+            'upcoming_trailers': self.count_upcoming_trailers(),
             'disk_usage': self.get_disk_usage(),
             'last_scan': self.get_last_scan_time(),
             'services_running': self.get_running_services(),
@@ -153,6 +155,41 @@ class TMDBDashboard:
                     if trailers_dir.exists():
                         count += len([f for f in trailers_dir.iterdir() 
                                     if f.suffix.lower() in ['.mp4', '.mkv', '.avi']])
+        
+        return count
+    
+    def count_upcoming_movies(self):
+        """Count upcoming movies with trailers"""
+        movies_path = Path(self.config.jellyfin_movies_path)
+        upcoming_path = movies_path / "_upcoming_trailers"
+        
+        if not upcoming_path.exists():
+            return 0
+        
+        count = 0
+        for movie_dir in upcoming_path.iterdir():
+            if movie_dir.is_dir() and movie_dir.name != "README.md":
+                trailers_dir = movie_dir / 'trailers'
+                if trailers_dir.exists() and any(trailers_dir.iterdir()):
+                    count += 1
+        
+        return count
+    
+    def count_upcoming_trailers(self):
+        """Count total upcoming trailers"""
+        movies_path = Path(self.config.jellyfin_movies_path)
+        upcoming_path = movies_path / "_upcoming_trailers"
+        
+        if not upcoming_path.exists():
+            return 0
+        
+        count = 0
+        for movie_dir in upcoming_path.iterdir():
+            if movie_dir.is_dir() and movie_dir.name != "README.md":
+                trailers_dir = movie_dir / 'trailers'
+                if trailers_dir.exists():
+                    count += len([f for f in trailers_dir.iterdir() 
+                                if f.suffix.lower() in ['.mp4', '.mkv', '.avi', '.webm']])
         
         return count
     

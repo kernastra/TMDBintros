@@ -37,7 +37,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 2rem;
         }
@@ -182,6 +182,14 @@
             <div class="stat-card">
                 <div class="stat-value">{{ stats.total_trailers }}</div>
                 <div class="stat-label">Total Trailers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.upcoming_movies }}</div>
+                <div class="stat-label">Upcoming Movies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.upcoming_trailers }}</div>
+                <div class="stat-label">Upcoming Trailers</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">{{ "%.1f GB"|format(stats.disk_usage / 1024 / 1024 / 1024) }}</div>

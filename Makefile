@@ -57,6 +57,22 @@ dashboard: ## Start web dashboard
 	@echo "Dashboard started at http://localhost:${DASHBOARD_PORT:-8080}"
 	@echo "View logs with: make logs-dashboard"
 
+# Download upcoming movie trailers
+upcoming: ## Download trailers for upcoming movies (3-6 months ahead)
+	@echo "Downloading trailers for upcoming movies..."
+	docker-compose --profile upcoming run --rm tmdb-upcoming
+	@echo "Upcoming trailers download completed"
+
+# List upcoming movies with trailers
+upcoming-list: ## List upcoming movies with downloaded trailers
+	@echo "Listing upcoming movies..."
+	docker-compose --profile upcoming run --rm tmdb-upcoming python3 tmdb_upcoming.py --list
+
+# Clean up old upcoming movies
+upcoming-cleanup: ## Clean up old upcoming movies past their release date
+	@echo "Cleaning up old upcoming movies..."
+	docker-compose --profile upcoming run --rm tmdb-upcoming python3 tmdb_upcoming.py --cleanup
+
 # Stop all services
 down: ## Stop all services
 	@echo "Stopping all services..."

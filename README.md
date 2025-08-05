@@ -16,6 +16,7 @@ A production-ready Python application that downloads movie trailers from The Mov
 - 🐳 **Full Docker support** with multi-service architecture
 - 📊 **Web dashboard** for monitoring and management
 - 🔄 **Real-time monitoring** and scheduled scanning
+- 🎭 **Upcoming movies** - Download trailers 3-6 months ahead!
 
 ## Jellyfin Integration
 
@@ -130,6 +131,28 @@ Validate your environment settings before downloading:
 ```bash
 python3 enhanced_downloader.py --test-config
 ```
+
+### Upcoming Movies (New! 🎭):
+Download trailers for movies releasing in the next 3-6 months:
+```bash
+# Enable upcoming movies in .env
+UPCOMING_ENABLED=true
+UPCOMING_MONTHS_AHEAD=6
+
+# Download upcoming trailers  
+make upcoming                    # Docker method
+python3 tmdb_upcoming.py        # Native method
+
+# List upcoming movies with trailers
+make upcoming-list
+python3 tmdb_upcoming.py --list
+
+# Clean up old upcoming movies
+make upcoming-cleanup
+python3 tmdb_upcoming.py --cleanup
+```
+
+📖 **Full upcoming movies guide**: See [UPCOMING_MOVIES.md](UPCOMING_MOVIES.md) for complete instructions.
 
 ### Process movies from legacy config file:
 ```bash

@@ -71,6 +71,15 @@ class ScanConfig:
     movie_folder_pattern: str = r"^(.+?)\s*\((\d{4})\).*$"
 
 @dataclass
+class UpcomingConfig:
+    """Upcoming movies configuration"""
+    enabled: bool = False
+    months_ahead: int = 6
+    min_popularity: float = 10.0
+    max_movies: int = 50
+    cleanup_days: int = 30
+
+@dataclass
 class LogConfig:
     """Logging configuration"""
     level: str = "INFO"
@@ -84,6 +93,7 @@ class TMDBConfig:
     network: NetworkConfig = field(default_factory=NetworkConfig)
     download: DownloadConfig = field(default_factory=DownloadConfig)
     scan: ScanConfig = field(default_factory=ScanConfig)
+    upcoming: UpcomingConfig = field(default_factory=UpcomingConfig)
     log: LogConfig = field(default_factory=LogConfig)
     movies: list = field(default_factory=list)
 
@@ -114,6 +124,14 @@ class ConfigManager:
             return int(os.getenv(key, str(default)))
         except ValueError:
             logger.warning(f"Invalid integer value for {key}, using default: {default}")
+            return default
+    
+    def get_env_float(self, key: str, default: float = 0.0) -> float:
+        """Get float value from environment variable"""
+        try:
+            return float(os.getenv(key, str(default)))
+        except ValueError:
+            logger.warning(f"Invalid float value for {key}, using default: {default}")
             return default
     
     def load_from_env(self) -> TMDBConfig:
@@ -155,6 +173,15 @@ class ConfigManager:
             movie_folder_pattern=os.getenv('MOVIE_FOLDER_PATTERN', r"^(.+?)\s*\((\d{4})\).*$")
         )
         
+        # Upcoming movies configuration
+        upcoming = UpcomingConfig(
+            enabled=self.get_env_bool('UPCOMING_ENABLED', False),
+            months_ahead=self.get_env_int('UPCOMING_MONTHS_AHEAD', 6),
+            min_popularity=self.get_env_float('UPCOMING_MIN_POPULARITY', 10.0),
+            max_movies=self.get_env_int('UPCOMING_MAX_MOVIES', 50),
+            cleanup_days=self.get_env_int('UPCOMING_CLEANUP_DAYS', 30)
+        )
+        
         # Log configuration
         log = LogConfig(
             level=os.getenv('LOG_LEVEL', 'INFO'),
@@ -168,6 +195,7 @@ class ConfigManager:
             network=network,
             download=download,
             scan=scan,
+            upcoming=upcoming,
             log=log
         )
         
