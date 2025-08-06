@@ -245,8 +245,9 @@ services:
       
       # Dashboard Configuration
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      - DASHBOARD_HOST=0.0.0.0
-      - DASHBOARD_PORT=8080
+      - DASHBOARD_HOST=${DASHBOARD_HOST:-0.0.0.0}
+      - DASHBOARD_PORT=${DASHBOARD_PORT:-8085}
+      - DASHBOARD_DEBUG=${DASHBOARD_DEBUG:-false}
     volumes:
       # Read-only access to movies for statistics
       - ${HOST_MOVIES_PATH:-./movies}:/movies:ro
@@ -257,8 +258,8 @@ services:
       # Environment file for configuration
       - ./.env:/app/.env:ro
     ports:
-      - "${DASHBOARD_PORT:-8080}:8080"
-    command: ["python3", "tmdb_dashboard.py", "--host", "0.0.0.0", "--port", "8080"]
+      - "${DASHBOARD_PORT:-8085}:${DASHBOARD_PORT:-8085}"
+    command: ["python3", "tmdb_dashboard.py", "--host", "${DASHBOARD_HOST:-0.0.0.0}", "--port", "${DASHBOARD_PORT:-8085}"]
     networks:
       - tmdb-network
     profiles:

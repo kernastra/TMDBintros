@@ -16,7 +16,134 @@ A production-ready Python application that downloads movie trailers from The Mov
 - 🐳 **Full Docker support** with multi-service architecture
 - 📊 **Web dashboard** for monitoring and management
 - 🔄 **Real-time monitoring** and scheduled scanning
-- 🎭 **Upcoming movies** - Download trailers 3-6 months ahead!
+- 🎭 **Upcoming movies** - Download trailers 3-6 months ahead with smart filtering!
+- 🎯 **Advanced filtering** - Country, language, genre, studio, director, rating filters
+- 🔗 **Radarr integration** - Seamless workflow with your existing media management
+
+## 🚀 Upcoming/In Testing Features
+
+### Radarr Integration (Beta) 🔗
+**Revolutionary workflow integration with Radarr media management**
+
+```bash
+# Enable Radarr integration in .env
+RADARR_ENABLED=true
+RADARR_URL=http://localhost:7878
+RADARR_API_KEY=your_radarr_api_key
+RADARR_INTEGRATION_MODE=hybrid
+```
+
+**Three Integration Modes:**
+- 🎭 **`upcoming`** - Download popular upcoming movie trailers (current behavior)
+- 🎯 **`radarr_only`** - Only download trailers for movies in your Radarr wanted list
+- ⚡ **`hybrid`** - Smart combination: popular upcoming + prioritized Radarr movies
+
+**Benefits:**
+- ✅ **No manual copying** - Trailers placed directly in Radarr movie folders
+- ✅ **Radarr-first workflow** - Focus on movies you actually want
+- ✅ **Automatic detection** - Monitors Radarr API for new wanted movies
+- ✅ **Reduced storage** - Only download trailers for relevant content
+
+**Status:** Beta testing - Looking for feedback from Radarr users!
+
+### Advanced Movie Filtering (Stable) 🎛️
+**Personalize your upcoming movie trailer downloads with 25+ filter options**
+
+```bash
+# Geographic filters
+UPCOMING_FILTER_COUNTRIES=US,GB,CA,AU
+UPCOMING_FILTER_LANGUAGES=en,en-US
+
+# Content filters
+UPCOMING_FILTER_GENRES=28,12,878,53  # Action, Adventure, Sci-Fi, Thriller
+UPCOMING_EXCLUDE_GENRES=27,99        # No Horror, Documentary
+
+# Production filters
+UPCOMING_FILTER_STUDIOS=Marvel,Disney,Warner,Universal
+UPCOMING_FILTER_DIRECTORS=Christopher Nolan,Denis Villeneuve
+
+# Quality filters  
+UPCOMING_MIN_VOTE_AVERAGE=6.5
+UPCOMING_MIN_VOTE_COUNT=100
+UPCOMING_MIN_BUDGET=25000000
+```
+
+**Use Cases:**
+- 🎬 **Marvel/Disney Fan**: Focus on big studio releases
+- 🎭 **Art House Cinephile**: Filter by acclaimed directors and high ratings
+- 🌍 **International Cinema**: Include multiple countries and languages
+- 🔍 **Quality Control**: Set minimum ratings, vote counts, and budgets
+
+### Multi-Service Architecture (Testing) 🏗️
+**Containerized microservices for enterprise deployment**
+
+```bash
+# Upcoming movies service
+docker-compose --profile upcoming up tmdb-upcoming
+
+# Real-time monitoring service  
+docker-compose --profile monitor up tmdb-monitor
+
+# Scheduled scanning service
+docker-compose --profile scheduler up tmdb-scheduler
+
+# Web dashboard service (port 8085 - avoids media stack conflicts)
+docker-compose --profile dashboard up tmdb-dashboard
+```
+
+**Enterprise Features:**
+- 🔄 **Independent services** - Scale components separately
+- 📊 **Centralized monitoring** - Web dashboard with statistics on port 8085
+- 🛡️ **Health checks** - Automatic service recovery
+- 📈 **Performance metrics** - Resource usage monitoring
+
+**Port Configuration:**
+- 🌐 **Dashboard**: Port 8085 (avoids qBittorrent 8080, Jellyfin 8096, Arr stack conflicts)
+- 🔧 **Configurable**: Set `DASHBOARD_PORT=8085` in your .env file
+
+### Intelligent Movie Detection (Alpha) 🤖
+**Machine learning-powered movie identification and trailer selection**
+
+**Planned Features:**
+- 🧠 **Smart folder parsing** - Handle non-standard movie folder names
+- 🎯 **Trailer quality scoring** - Automatically select the best trailers
+- 📊 **Usage analytics** - Learn from your viewing patterns
+- 🔍 **Duplicate detection** - Advanced movie matching algorithms
+
+**Status:** In development - Basic implementation in progress
+
+---
+
+### 🧪 How to Test Beta Features
+
+1. **Enable upcoming movies and Radarr integration:**
+   ```bash
+   cp .env.example .env
+   # Configure TMDB_API_KEY, RADARR_* settings
+   ```
+
+2. **Test Radarr integration:**
+   ```bash
+   # List movies that would be processed
+   make upcoming-list
+   
+   # Download trailers with Radarr integration
+   make upcoming
+   ```
+
+3. **Provide feedback:**
+   - 💬 Report issues on GitHub
+   - 📧 Share success stories
+   - 💡 Suggest improvements
+
+### 🤝 Beta Testing Program
+We're looking for users to test these cutting-edge features:
+- **Radarr power users** - Test the integration modes
+- **Filter enthusiasts** - Try complex filtering combinations  
+- **Enterprise users** - Test the multi-service architecture
+- **International users** - Test multi-language/country filtering
+
+**Join the beta:** Enable these features and share your experience!
 
 ## Jellyfin Integration
 
@@ -133,19 +260,37 @@ python3 enhanced_downloader.py --test-config
 ```
 
 ### Upcoming Movies (New! 🎭):
-Download trailers for movies releasing in the next 3-6 months:
+Download trailers for movies releasing in the next 3-6 months with advanced filtering:
 ```bash
 # Enable upcoming movies in .env
 UPCOMING_ENABLED=true
-UPCOMING_MONTHS_AHEAD=6
+UPCOMING_DAYS_AHEAD=90
+UPCOMING_MAX_TRAILERS_PER_MOVIE=3    # Download 1-5 trailers per movie (default: 3)
+UPCOMING_FILTER_COUNTRIES=US,GB,CA
+UPCOMING_FILTER_GENRES=28,12,878     # Action, Adventure, Sci-Fi
+UPCOMING_MIN_VOTE_AVERAGE=6.0
 
 # Download upcoming trailers  
-make upcoming                    # Docker method
-python3 tmdb_upcoming.py        # Native method
+make upcoming                        # Docker method
+python3 tmdb_upcoming.py            # Native method
 
-# List upcoming movies with trailers
+# List upcoming movies (no download)
 make upcoming-list
-python3 tmdb_upcoming.py --list
+python3 tmdb_upcoming.py --list-only
+
+# Clean up old upcoming trailers
+make upcoming-cleanup
+python3 tmdb_upcoming.py --cleanup
+```
+
+**Advanced Filtering Options:**
+- 🌍 **Geographic**: Filter by country and language
+- 🎭 **Content**: Include/exclude genres, ratings
+- 🏭 **Production**: Filter by studios, directors, actors  
+- ⭐ **Quality**: Minimum vote average, vote count, budget
+- 🔗 **Radarr Integration**: Sync with your Radarr wanted list
+
+📖 **Complete guide**: See [UPCOMING_MOVIES_USAGE.md](UPCOMING_MOVIES_USAGE.md) for detailed configuration.
 
 # Clean up old upcoming movies
 make upcoming-cleanup

@@ -1,0 +1,139 @@
+version: '3.3'
+
+services:
+  tmdb-trailer-downloader:
+    build: .
+    container_name: tmdb-trailer-downloader-test
+    volumes:
+      - ./movies:/app/movies
+      - ./logs:/app/logs
+    environment:
+      # TMDB API Configuration
+      TMDB_API_KEY: "your_tmdb_api_key_here"
+      
+      # Local/Remote Path Configuration
+      JELLYFIN_MOVIES_PATH: "/app/movies"
+      DOWNLOAD_QUALITY: "best"
+      
+      # Network Share Configuration (disabled for testing)
+      NETWORK_ENABLED: "false"
+      
+      # Logging Configuration
+      LOG_LEVEL: "INFO"
+      LOG_FILE: ""
+      
+      # Download Options
+      MAX_TRAILERS_PER_MOVIE: "5"
+      SKIP_EXISTING: "true"
+      TRAILER_NAMING_PATTERN: "trailer_{index}"
+      OVERWRITE_EXISTING: "false"
+      
+      # Upcoming Movies Configuration
+      UPCOMING_ENABLED: "true"
+      UPCOMING_DAYS_AHEAD: "90"
+      UPCOMING_MAX_MOVIES: "20"
+      UPCOMING_MAX_TRAILERS_PER_MOVIE: "3"
+      UPCOMING_POPULARITY_THRESHOLD: "10.0"
+      UPCOMING_CLEANUP_DAYS: "30"
+      
+      # Content Filters (US/UK English movies)
+      UPCOMING_FILTER_COUNTRIES: "US,GB"
+      UPCOMING_FILTER_LANGUAGES: "en"
+      UPCOMING_FILTER_GENRES: "28,12,878,53"  # Action, Adventure, Sci-Fi, Thriller
+      UPCOMING_EXCLUDE_GENRES: "27,9648"      # Exclude Horror, Documentary
+      
+      # Production Company Filters
+      UPCOMING_FILTER_STUDIOS: "Marvel,Warner Bros,Disney,Universal"
+      UPCOMING_EXCLUDE_STUDIOS: ""
+      
+      # People Filters
+      UPCOMING_FILTER_DIRECTORS: ""
+      UPCOMING_FILTER_ACTORS: ""
+      
+      # Content Rating Filters
+      UPCOMING_FILTER_RATINGS: "PG,PG-13,R"
+      UPCOMING_EXCLUDE_RATINGS: "NC-17"
+      
+      # Advanced Filters
+      UPCOMING_MIN_RUNTIME: "90"
+      UPCOMING_MAX_RUNTIME: "180"
+      UPCOMING_MIN_BUDGET: "10000000"
+      UPCOMING_FRANCHISE_ONLY: "false"
+      UPCOMING_ORIGINAL_ONLY: "false"
+      
+      # Quality Filters
+      UPCOMING_MIN_VOTE_AVERAGE: "6.0"
+      UPCOMING_MIN_VOTE_COUNT: "100"
+      
+      # Radarr Integration (disabled for testing)
+      RADARR_ENABLED: "false"
+      RADARR_URL: "http://localhost:7878"
+      RADARR_API_KEY: ""
+      RADARR_SYNC_MODE: "upcoming"
+      
+      # Movie Library Scanning
+      SCAN_RECURSIVE: "true"
+      MOVIE_FOLDER_PATTERN: "(.+) \\(([0-9]{4})\\)"
+      
+      # Performance Options
+      DOWNLOAD_TIMEOUT: "300"
+      MAX_CONCURRENT_DOWNLOADS: "3"
+      RETRY_ATTEMPTS: "3"
+      RETRY_DELAY: "5"
+      
+      # Monitoring and Automation (disabled for testing)
+      ENABLE_MONITORING: "false"
+      MONITOR_TYPE: "disabled"
+      SCHEDULE_ENABLED: "false"
+      SERVICE_MODE: "false"
+      
+    restart: unless-stopped
+    networks:
+      - tmdb-network
+
+  # Web Dashboard
+  tmdb-dashboard:
+    build: .
+    container_name: tmdb-dashboard-test
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./movies:/app/movies
+      - ./logs:/app/logs
+    environment:
+      # TMDB API Configuration
+      TMDB_API_KEY: "your_tmdb_api_key_here"
+      
+      # Dashboard Configuration
+      DASHBOARD_ENABLED: "true"
+      DASHBOARD_HOST: "0.0.0.0"
+      DASHBOARD_PORT: "8085"
+      DASHBOARD_DEBUG: "false"
+      
+      # Same configuration as main service for consistency
+      JELLYFIN_MOVIES_PATH: "/app/movies"
+      LOG_LEVEL: "INFO"
+      UPCOMING_ENABLED: "true"
+      UPCOMING_DAYS_AHEAD: "90"
+      UPCOMING_MAX_MOVIES: "20"
+      UPCOMING_MAX_TRAILERS_PER_MOVIE: "3"
+      
+      # Content Filters
+      UPCOMING_FILTER_COUNTRIES: "US,GB"
+      UPCOMING_FILTER_LANGUAGES: "en"
+      UPCOMING_FILTER_GENRES: "28,12,878,53"
+      
+    command: ["python", "-m", "dashboard.app"]
+    restart: unless-stopped
+    networks:
+      - tmdb-network
+    depends_on:
+      - tmdb-trailer-downloader
+
+networks:
+  tmdb-network:
+    driver: bridge
+
+volumes:
+  movies:
+  logs:

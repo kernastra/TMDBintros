@@ -54,24 +54,22 @@ up: ## Start all services
 dashboard: ## Start web dashboard
 	@echo "Starting web dashboard..."
 	docker-compose --profile dashboard up -d tmdb-dashboard
-	@echo "Dashboard started at http://localhost:${DASHBOARD_PORT:-8080}"
-	@echo "View logs with: make logs-dashboard"
+	@echo "🌐 Dashboard started at http://localhost:${DASHBOARD_PORT:-8085}"
+	@echo "📊 Access your TMDB trailer management interface"
+	@echo "📝 View logs with: make logs-dashboard"
 
-# Download upcoming movie trailers
-upcoming: ## Download trailers for upcoming movies (3-6 months ahead)
-	@echo "Downloading trailers for upcoming movies..."
-	docker-compose --profile upcoming run --rm tmdb-upcoming
-	@echo "Upcoming trailers download completed"
+# Upcoming Movies Commands
+upcoming:
+	@echo "🎬 Downloading trailers for upcoming movies..."
+	python tmdb_upcoming.py
 
-# List upcoming movies with trailers
-upcoming-list: ## List upcoming movies with downloaded trailers
-	@echo "Listing upcoming movies..."
-	docker-compose --profile upcoming run --rm tmdb-upcoming python3 tmdb_upcoming.py --list
+upcoming-list:
+	@echo "📋 Listing upcoming movies (no download)..."
+	python tmdb_upcoming.py --list-only
 
-# Clean up old upcoming movies
-upcoming-cleanup: ## Clean up old upcoming movies past their release date
-	@echo "Cleaning up old upcoming movies..."
-	docker-compose --profile upcoming run --rm tmdb-upcoming python3 tmdb_upcoming.py --cleanup
+upcoming-cleanup:
+	@echo "🧹 Cleaning up old upcoming trailers..."
+	python tmdb_upcoming.py --cleanup
 
 # Stop all services
 down: ## Stop all services

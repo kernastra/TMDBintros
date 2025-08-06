@@ -214,9 +214,13 @@ sudo usermod -a -G 1000 $USER
 All services use the `tmdb-network` bridge network for internal communication.
 
 ### External Access
-The dashboard service exposes a web interface:
+The dashboard service exposes a web interface on port 8085 (avoids media stack conflicts):
 ```bash
-DASHBOARD_PORT=8080 docker-compose --profile dashboard up -d tmdb-dashboard
+# Default port 8085 (avoids qBittorrent 8080, Jellyfin 8096, Arr stack)
+docker-compose --profile dashboard up -d tmdb-dashboard
+
+# Custom port if needed
+DASHBOARD_PORT=8085 docker-compose --profile dashboard up -d tmdb-dashboard
 ```
 
 **Web Dashboard Features:**
@@ -226,7 +230,14 @@ DASHBOARD_PORT=8080 docker-compose --profile dashboard up -d tmdb-dashboard
 - 📝 **Live activity logs** with filtering
 - 🔄 **Auto-refresh** every 30 seconds
 
-Access at: http://localhost:8080
+Access at: **http://localhost:8085**
+
+**Port Conflict Avoidance:**
+- ✅ **Port 8085**: Chosen to avoid common media server ports
+- ❌ **Port 8080**: Used by qBittorrent web UI
+- ❌ **Port 8096**: Used by Jellyfin
+- ❌ **Port 7878**: Used by Radarr
+- ❌ **Port 8989**: Used by Sonarr
 
 ## Security Considerations
 

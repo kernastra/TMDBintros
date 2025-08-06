@@ -74,10 +74,47 @@ class ScanConfig:
 class UpcomingConfig:
     """Upcoming movies configuration"""
     enabled: bool = False
-    months_ahead: int = 6
-    min_popularity: float = 10.0
+    days_ahead: int = 90  # Changed from months_ahead for consistency
+    popularity_threshold: float = 10.0  # Changed from min_popularity for consistency
     max_movies: int = 50
+    max_trailers_per_movie: int = 3  # Maximum trailers to download per upcoming movie
     cleanup_days: int = 30
+    
+    # Content Filters
+    filter_countries: list = field(default_factory=list)
+    filter_languages: list = field(default_factory=list)
+    filter_genres: list = field(default_factory=list)
+    exclude_genres: list = field(default_factory=list)
+    
+    # Production Filters
+    filter_studios: list = field(default_factory=list)
+    exclude_studios: list = field(default_factory=list)
+    filter_directors: list = field(default_factory=list)
+    filter_actors: list = field(default_factory=list)
+    
+    # Content Rating Filters
+    filter_ratings: list = field(default_factory=list)
+    exclude_ratings: list = field(default_factory=list)
+    
+    # Advanced Filters
+    min_runtime: int = 0
+    max_runtime: int = 0
+    min_budget: int = 0
+    franchise_only: bool = False
+    original_only: bool = False
+    
+    # Quality Filters
+    min_vote_average: float = 0.0
+    min_vote_count: int = 0
+
+@dataclass
+@dataclass
+class RadarrConfig:
+    """Radarr integration configuration"""
+    enabled: bool = False
+    url: str = "http://localhost:7878"
+    api_key: str = ""
+    sync_mode: str = "upcoming"  # upcoming, radarr_only, or hybrid
 
 @dataclass
 class LogConfig:
@@ -94,6 +131,7 @@ class TMDBConfig:
     download: DownloadConfig = field(default_factory=DownloadConfig)
     scan: ScanConfig = field(default_factory=ScanConfig)
     upcoming: UpcomingConfig = field(default_factory=UpcomingConfig)
+    radarr: RadarrConfig = field(default_factory=RadarrConfig)
     log: LogConfig = field(default_factory=LogConfig)
     movies: list = field(default_factory=list)
 
@@ -133,6 +171,24 @@ class ConfigManager:
         except ValueError:
             logger.warning(f"Invalid float value for {key}, using default: {default}")
             return default
+    
+    def parse_comma_list(self, key: str) -> list:
+        """Parse comma-separated string into list"""
+        value = os.getenv(key, '').strip()
+        if not value:
+            return []
+        return [item.strip() for item in value.split(',') if item.strip()]
+    
+    def parse_comma_int_list(self, key: str) -> list:
+        """Parse comma-separated integers into list"""
+        value = os.getenv(key, '').strip()
+        if not value:
+            return []
+        try:
+            return [int(item.strip()) for item in value.split(',') if item.strip()]
+        except ValueError:
+            logger.warning(f"Invalid integer list for {key}: {value}")
+            return []
     
     def load_from_env(self) -> TMDBConfig:
         """Load configuration from environment variables"""
@@ -176,16 +232,42 @@ class ConfigManager:
         # Upcoming movies configuration
         upcoming = UpcomingConfig(
             enabled=self.get_env_bool('UPCOMING_ENABLED', False),
-            months_ahead=self.get_env_int('UPCOMING_MONTHS_AHEAD', 6),
-            min_popularity=self.get_env_float('UPCOMING_MIN_POPULARITY', 10.0),
+            days_ahead=self.get_env_int('UPCOMING_DAYS_AHEAD', 90),
+            popularity_threshold=self.get_env_float('UPCOMING_POPULARITY_THRESHOLD', 10.0),
             max_movies=self.get_env_int('UPCOMING_MAX_MOVIES', 50),
-            cleanup_days=self.get_env_int('UPCOMING_CLEANUP_DAYS', 30)
+            max_trailers_per_movie=self.get_env_int('UPCOMING_MAX_TRAILERS_PER_MOVIE', 3),
+            cleanup_days=self.get_env_int('UPCOMING_CLEANUP_DAYS', 30),
+            filter_countries=self.parse_comma_list('UPCOMING_FILTER_COUNTRIES'),
+            filter_languages=self.parse_comma_list('UPCOMING_FILTER_LANGUAGES'),
+            filter_genres=self.parse_comma_int_list('UPCOMING_FILTER_GENRES'),
+            exclude_genres=self.parse_comma_int_list('UPCOMING_EXCLUDE_GENRES'),
+            filter_studios=self.parse_comma_list('UPCOMING_FILTER_STUDIOS'),
+            exclude_studios=self.parse_comma_list('UPCOMING_EXCLUDE_STUDIOS'),
+            filter_directors=self.parse_comma_list('UPCOMING_FILTER_DIRECTORS'),
+            filter_actors=self.parse_comma_list('UPCOMING_FILTER_ACTORS'),
+            filter_ratings=self.parse_comma_list('UPCOMING_FILTER_RATINGS'),
+            exclude_ratings=self.parse_comma_list('UPCOMING_EXCLUDE_RATINGS'),
+            min_runtime=self.get_env_int('UPCOMING_MIN_RUNTIME', 0),
+            max_runtime=self.get_env_int('UPCOMING_MAX_RUNTIME', 0),
+            min_budget=self.get_env_int('UPCOMING_MIN_BUDGET', 0),
+            franchise_only=self.get_env_bool('UPCOMING_FRANCHISE_ONLY', False),
+            original_only=self.get_env_bool('UPCOMING_ORIGINAL_ONLY', False),
+            min_vote_average=self.get_env_float('UPCOMING_MIN_VOTE_AVERAGE', 0.0),
+            min_vote_count=self.get_env_int('UPCOMING_MIN_VOTE_COUNT', 0)
         )
         
         # Log configuration
         log = LogConfig(
             level=os.getenv('LOG_LEVEL', 'INFO'),
             file=os.getenv('LOG_FILE') or None
+        )
+        
+        # Radarr configuration
+        radarr = RadarrConfig(
+            enabled=self.get_env_bool('RADARR_ENABLED', False),
+            url=os.getenv('RADARR_URL', ''),
+            api_key=os.getenv('RADARR_API_KEY', ''),
+            sync_mode=os.getenv('RADARR_SYNC_MODE', 'upcoming')
         )
         
         # Main configuration
@@ -196,6 +278,7 @@ class ConfigManager:
             download=download,
             scan=scan,
             upcoming=upcoming,
+            radarr=radarr,
             log=log
         )
         
