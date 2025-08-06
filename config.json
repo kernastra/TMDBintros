@@ -1,0 +1,20 @@
+{
+  "tmdb_api_key": "9d6e23004c15bbfb434479fcaac0a844",
+  "remote_share_path": "/home/sean/mnt/apollo/media/movies",
+  "quality": "best",
+  "max_trailers_per_movie": 3,
+  "movies": [
+    {
+      "title": "Avatar",
+      "year": 2009
+    },
+    {
+      "title": "The Matrix",
+      "year": 1999
+    },
+    {
+      "title": "Interstellar",
+      "year": 2014
+    }
+  ]
+}
